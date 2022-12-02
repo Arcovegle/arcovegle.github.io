@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>HITCON 2022 Reverse Writeup | arcovegle&#39;s blog</title>
+
+
+    <meta name="keywords" content="reverse, writeup">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="preface Checker problem description analysis recover script solver script   Meow Way problem description analysis solver script   gocrygo problem description analysis solver script    preface这次比赛是我加入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HITCON 2022 Reverse Writeup">
+<meta property="og:url" content="http://arcovegle.github.io/2022/12/02/HITCON%202022%20Reverse%20Writeup/index.html">
+<meta property="og:site_name" content="arcovegle&#39;s blog">
+<meta property="og:description" content="preface Checker problem description analysis recover script solver script   Meow Way problem description analysis solver script   gocrygo problem description analysis solver script    preface这次比赛是我加入">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://arcovegle.github.io/2022/12/02/HITCON%202022%20Reverse%20Writeup/sub_140001B50.png">
+<meta property="og:image" content="http://arcovegle.github.io/HITCON%202022%20Reverse%20WriteUp/sub_222A30.png">
+<meta property="article:published_time" content="2022-12-02T08:05:12.000Z">
+<meta property="article:modified_time" content="2022-12-02T11:08:40.098Z">
+<meta property="article:author" content="arcovegle">
+<meta property="article:tag" content="reverse">
+<meta property="article:tag" content="writeup">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://arcovegle.github.io/2022/12/02/HITCON%202022%20Reverse%20Writeup/sub_140001B50.png">
+
+
+    
+<link rel="stylesheet" href="/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="/css/highlight/default.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="/css/highlight/dark.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/style/dark.css">
+
+    
+<script src="/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/" class="button">
+            <span class="logo__text">arcovegle&#39;s blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/" class="navbar-menu button">Home</a>
+                
+                    <a href="/archives/" class="navbar-menu button">Archives</a>
+                
+                    <a href="/about/" class="navbar-menu button">About</a>
+                
+            </div>
+        
+        
+        
+    <a href="/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/" class="dropdown-menu button">Home</a>
+                
+                    <a href="/archives/" class="dropdown-menu button">Archives</a>
+                
+                    <a href="/about/" class="dropdown-menu button">About</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        HITCON 2022 Reverse Writeup
+    </h1>
+    <div class="post-title__meta">
+        <a href="/archives/2022/12/" class="post-meta__date button">2022-12-02</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+
+<article class="post content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <ul>
+<li><a href="#preface">preface</a></li>
+<li><a href="#checker-198pts">Checker</a><ul>
+<li><a href="#problem-description">problem description</a></li>
+<li><a href="#analysis">analysis</a></li>
+<li><a href="#recover-script">recover script</a></li>
+<li><a href="#solver-script">solver script</a></li>
+</ul>
+</li>
+<li><a href="#meow-way-193pts">Meow Way</a><ul>
+<li><a href="#problem-description-1">problem description</a></li>
+<li><a href="#analysis-1">analysis</a></li>
+<li><a href="#solver-script-1">solver script</a></li>
+</ul>
+</li>
+<li><a href="#gocrygo-248pts">gocrygo</a><ul>
+<li><a href="#problem-description-2">problem description</a></li>
+<li><a href="#analysis-2">analysis</a></li>
+<li><a href="#solver-script-2">solver script</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="preface"><a href="#preface" class="headerlink" title="preface"></a>preface</h2><p>这次比赛是我加入 AAA 之后第一次与 Katzebin 联队打国际赛，最终获得了 rank 7. </p>
+<p>今年 HITCON 从北京时间 11 月 25 日晚 10 点开始到 11 月 27 日晚 10 点结束，比赛过程中我主要负责逆向部分的题目。逆向部分在 10 点开赛后首先放出的是 Checker 这道题目，在我分析完 sys 文件中 SMC 的 trick 并把思路放在队伍共享文档之后，Shino 师傅很快便写出了解题脚本，先我一步解出了题目；第二天凌晨 4 点放出了剩下的两道逆向，我是早上看到的题目，由于 Meow Way 比较简单，很快我便解出了；gocrygo 这道题目是针对勒索病毒的分析，关键在于加密算法的识别与 core dump 中 key 的提取，在与 Shino 师傅的合作下，我们很早便拿到了 Tripple DES 加密用到的 24 bytes 密钥，但很长时间都没有明确加密使用的模式，之后又做了许多错误的尝试 … 不过幸运的是在当天晚上，tkmk 师傅查看了这道题目的共享文档，一针见血的指出加密模式为 CTR，于是题目便迎刃而解了。</p>
+<h2 id="Checker-198pts"><a href="#Checker-198pts" class="headerlink" title="Checker [198pts]"></a>Checker [198pts]</h2><h3 id="problem-description"><a href="#problem-description" class="headerlink" title="problem description"></a>problem description</h3><p>just a deep and normal checker</p>
+<h3 id="analysis"><a href="#analysis" class="headerlink" title="analysis"></a>analysis</h3><p>附件给出了 <code>checker.exe</code> 与 <code>checker_drv.sys</code> 两个文件，其中前者通过 <code>[DeviceIoControl](https://learn.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-deviceiocontrol)</code> 函数向后者对应的驱动程序发送 control code 调用其 check 逻辑，对应驱动程序的设备名为 <code>hitcon_checker</code></p>
+<p>于是主要的逆向工作转向了 sys 即驱动文件，通过 DriverEntry 很容易定位到 <code>sub_140001B50</code> 函数</p>
+<p><img src="/2022/12/02/HITCON%202022%20Reverse%20Writeup/sub_140001B50.png" class="lazy" data-srcset="/2022/12/02/HITCON%202022%20Reverse%20Writeup/sub_140001B50.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAABlBMVEXMzMyWlpYU2uzLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNgAAAAAgAB9HFkpgAAAABJRU5ErkJggg==" alt="sub_140001B50.png"></p>
+<p>变量 obj 为对应的驱动对象 (<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/introduction-to-driver-objects">Driver Object</a>)，简单了解后可知 <code>sub_1400011B0</code> 即为其驱动消息处理函数，图中下方容易识别出驱动程序使用了 SMC 这一 trick 来干扰静态分析</p>
+<p>进一步分析 <code>sub_1400011B0</code> 函数，该 dispatcher 使用 swich-case 实现了对不同驱动消息的处理，8 个 case 中 7 个调用了相同的函数 <code>sub_1400014D0</code> ，case 0x222080 对应 exe 中通过 <code>DeviceIoControl</code> 发送的 control code，也就是最终的 check</p>
+<p>分析 <code>sub_1400014D0</code> 可知，该函数通过传入的 offset 将对应 data 段字节序列 offset 处的数据用于地址 <code>0x140001B30</code> 的 SMC，在相应修改完成后，调用 <code>0x140001B30</code> 处函数对 flag 对应数据逐字节运算。因此，猜测只需知道上文提到的 7 个 case 的前后调用顺序即可计算得到 flag 满足 check 的条件</p>
+<p>起初的想法是爆破这一调用顺序，但随后考虑到每次经过 <code>sub_1400014D0</code> 修改后的相应代码理应是 reasonable 的，即所谓“正常”的字节运算函数，于是结合自动化 patch + 人工核查容易恢复 7 个 case 正确的调用顺序，并根据恢复出的运算逻辑得到 flag</p>
+<h3 id="recover-script"><a href="#recover-script" class="headerlink" title="recover script"></a>recover script</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ida_bytes <span class="keyword">import</span> get_byte, patch_byte</span><br><span class="line"></span><br><span class="line">code_addr = <span class="number">0x140001b30</span></span><br><span class="line">init_addr = <span class="number">0x140001430</span></span><br><span class="line">data_addr = <span class="number">0x140003030</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">do_init</span>():</span><br><span class="line">    <span class="keyword">global</span> code_addr</span><br><span class="line">    <span class="keyword">global</span> init_addr</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>):</span><br><span class="line">        code_byte = get_byte(code_addr + i % <span class="number">16</span>)</span><br><span class="line">        init_byte = get_byte(init_addr + i)</span><br><span class="line">        patch_byte(code_addr + i % <span class="number">16</span>, code_byte ^ init_byte)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">do_step</span>(<span class="params">offset, sure:<span class="built_in">bool</span></span>):</span><br><span class="line">    <span class="keyword">global</span> code_addr</span><br><span class="line">    <span class="keyword">global</span> init_addr</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">16</span>):</span><br><span class="line">        code_byte = get_byte(code_addr + i)</span><br><span class="line">        data_byte = get_byte(data_addr + i + offset)</span><br><span class="line">        patch_byte(code_addr + i, code_byte ^ data_byte)</span><br><span class="line">    <span class="keyword">if</span> sure:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">16</span>):</span><br><span class="line">            code_byte = get_byte(code_addr + i)</span><br><span class="line">            data_byte = get_byte(data_addr + i + offset + <span class="number">16</span>)</span><br><span class="line">            patch_byte(code_addr + i, code_byte ^ data_byte)</span><br><span class="line"></span><br><span class="line">do_init()</span><br><span class="line">do_step(<span class="number">224</span>, <span class="literal">True</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">__int64 __fastcall sub_140001B30(unsigned __int8 a1)</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  __int64 result; // rax</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  result = a1 &gt;&gt; 5;</span></span><br><span class="line"><span class="string">  LOBYTE(result) = (8 * a1) | (a1 &gt;&gt; 5);</span></span><br><span class="line"><span class="string">  return result;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">do_step(<span class="number">64</span>, <span class="literal">True</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">__int64 __fastcall sub_140001B30(unsigned __int8 a1)</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  return a1 ^ 0x26u;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">do_step(<span class="number">192</span>, <span class="literal">True</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">__int64 __fastcall sub_140001B30(unsigned __int8 a1)</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  __int64 result; // rax</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  result = a1 &gt;&gt; 4;</span></span><br><span class="line"><span class="string">  LOBYTE(result) = (16 * a1) | (a1 &gt;&gt; 4);</span></span><br><span class="line"><span class="string">  return result;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">do_step(<span class="number">0</span>, <span class="literal">True</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">lea     eax, [rcx+37h]</span></span><br><span class="line"><span class="string">retn</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">do_step(<span class="number">32</span>, <span class="literal">True</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">lea     eax, [rcx+7Bh]</span></span><br><span class="line"><span class="string">retn</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">do_step(<span class="number">128</span>, <span class="literal">True</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">__int64 __fastcall sub_140001B30(unsigned __int8 a1)</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  __int64 result; // rax</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  result = a1 &gt;&gt; 1;</span></span><br><span class="line"><span class="string">  LOBYTE(result) = (a1 &lt;&lt; 7) | (a1 &gt;&gt; 1);</span></span><br><span class="line"><span class="string">  return result;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">do_step(<span class="number">96</span>, <span class="literal">True</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">__int64 __fastcall sub_140001B30(unsigned __int8 a1)</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  return 0xad * (unsigned int)a1;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">do_step(<span class="number">160</span>, <span class="literal">False</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">__int64 __fastcall sub_140001B30(unsigned __int8 a1)</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  __int64 result; // rax</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  result = a1 &gt;&gt; 6;</span></span><br><span class="line"><span class="string">  LOBYTE(result) = (4 * a1) | (a1 &gt;&gt; 6);</span></span><br><span class="line"><span class="string">  return result;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="solver-script"><a href="#solver-script" class="headerlink" title="solver script"></a>solver script</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ida_bytes <span class="keyword">import</span> get_byte</span><br><span class="line"></span><br><span class="line">enc = []</span><br><span class="line">flag_addr = <span class="number">0x140003000</span></span><br><span class="line">flag_len = <span class="number">43</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt</span>(<span class="params"><span class="keyword">case</span></span>):</span><br><span class="line">    <span class="keyword">global</span> enc</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">case</span> == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">            enc[i] = (<span class="number">8</span> * enc[i]) | (enc[i] &gt;&gt; <span class="number">5</span>)</span><br><span class="line">            enc[i] &amp;= <span class="number">0xFF</span></span><br><span class="line">    <span class="keyword">elif</span> <span class="keyword">case</span> == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">            enc[i] ^= <span class="number">0x26</span></span><br><span class="line">    <span class="keyword">elif</span> <span class="keyword">case</span> == <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">            enc[i] = (<span class="number">16</span> * enc[i]) | (enc[i] &gt;&gt; <span class="number">4</span>)</span><br><span class="line">            enc[i] &amp;= <span class="number">0xFF</span></span><br><span class="line">    <span class="keyword">elif</span> <span class="keyword">case</span> == <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">            enc[i] += <span class="number">0x37</span></span><br><span class="line">            enc[i] &amp;= <span class="number">0xFF</span></span><br><span class="line">    <span class="keyword">elif</span> <span class="keyword">case</span> == <span class="number">4</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">            enc[i] += <span class="number">0x7B</span></span><br><span class="line">            enc[i] &amp;= <span class="number">0xFF</span></span><br><span class="line">    <span class="keyword">elif</span> <span class="keyword">case</span> == <span class="number">5</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">            enc[i] = (enc[i] &lt;&lt; <span class="number">7</span>) | (enc[i] &gt;&gt; <span class="number">1</span>)</span><br><span class="line">            enc[i] &amp;= <span class="number">0xFF</span></span><br><span class="line">    <span class="keyword">elif</span> <span class="keyword">case</span> == <span class="number">6</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">            enc[i] *= <span class="number">0xAD</span></span><br><span class="line">            enc[i] &amp;= <span class="number">0xFF</span></span><br><span class="line">    <span class="keyword">elif</span> <span class="keyword">case</span> == <span class="number">7</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">            enc[i] = (enc[i] &lt;&lt; <span class="number">2</span>) | (enc[i] &gt;&gt; <span class="number">6</span>)</span><br><span class="line">            enc[i] &amp;= <span class="number">0xFF</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(flag_len):</span><br><span class="line">    enc.append(get_byte(flag_addr + i))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> <span class="keyword">case</span> <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">    encrypt(<span class="keyword">case</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>.join(<span class="built_in">map</span>(<span class="built_in">chr</span>, enc)))</span><br><span class="line"><span class="comment"># hitcon&#123;r3ally_re4lly_rea11y_normal_checker&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Meow-Way-193pts"><a href="#Meow-Way-193pts" class="headerlink" title="Meow Way [193pts]"></a>Meow Way [193pts]</h2><h3 id="problem-description-1"><a href="#problem-description-1" class="headerlink" title="problem description"></a>problem description</h3><p>Reverse-engineering like the meow way!</p>
+<h3 id="analysis-1"><a href="#analysis-1" class="headerlink" title="analysis"></a>analysis</h3><p>这个题目主要考察了 windows 程序 x86 与 x64 之间的切换，相关汇编指令如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// convert x86 to x64</span><br><span class="line">push 0x33</span><br><span class="line">call $+5</span><br><span class="line">add dword [esp], 5</span><br><span class="line">retf</span><br><span class="line">// convert x64 to x86</span><br><span class="line">call $+5</span><br><span class="line">mov dword [rsp + 4], 0x23</span><br><span class="line">add dword [rsp], 0xD</span><br><span class="line">retf</span><br></pre></td></tr></table></figure>
+
+<p>核心是利用 <code>retf</code> 对 CS 寄存器进行修改</p>
+<p>此外，题目中 x86 程序对 x64 函数的调用中参数传递还使用到了 <code>cdq</code> 指令，可以理解为该指令实现了 32 位字长的扩展，从而满足调用 64 位函数时对参数字长的要求</p>
+<p>算法的逆向部分比较简单，这里不再赘述</p>
+<h3 id="solver-script-1"><a href="#solver-script-1" class="headerlink" title="solver script"></a>solver script</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ida_bytes <span class="keyword">import</span> get_bytes</span><br><span class="line"></span><br><span class="line">add_data = [<span class="number">196</span>, <span class="number">22</span>, <span class="number">142</span>, <span class="number">119</span>, <span class="number">5</span>, <span class="number">185</span>, <span class="number">13</span>, <span class="number">107</span>, <span class="number">36</span>, <span class="number">85</span>, <span class="number">18</span>, <span class="number">53</span>, <span class="number">118</span>, <span class="number">231</span>, <span class="number">251</span>, <span class="number">160</span>, <span class="number">218</span>, <span class="number">52</span>, <span class="number">132</span>, <span class="number">180</span>, <span class="number">200</span>, <span class="number">155</span>, <span class="number">239</span>, <span class="number">180</span>, <span class="number">185</span>, <span class="number">10</span>, <span class="number">87</span>, <span class="number">92</span>, <span class="number">254</span>, <span class="number">197</span>, <span class="number">106</span>, <span class="number">115</span>, <span class="number">73</span>, <span class="number">189</span>, <span class="number">17</span>, <span class="number">214</span>, <span class="number">143</span>, <span class="number">107</span>, <span class="number">10</span>, <span class="number">151</span>, <span class="number">171</span>, <span class="number">78</span>, <span class="number">237</span>, <span class="number">254</span>, <span class="number">151</span>, <span class="number">249</span>, <span class="number">152</span>, <span class="number">101</span>]</span><br><span class="line"></span><br><span class="line">xor_data = [<span class="number">0xba</span>, <span class="number">0x2f</span>, <span class="number">0xcd</span>, <span class="number">0xf6</span>, <span class="number">0x9f</span>, <span class="number">0xd0</span>, <span class="number">0x22</span>, <span class="number">0xf7</span>, <span class="number">0xd0</span>, <span class="number">0x1f</span>, <span class="number">0xa8</span>, <span class="number">0x3d</span>, <span class="number">0xc7</span>, <span class="number">0xa5</span>, <span class="number">0x47</span>, <span class="number">0x68</span>, <span class="number">0xd7</span>, <span class="number">0x4a</span>, <span class="number">0x96</span>, <span class="number">0x91</span>, <span class="number">0x2e</span>, <span class="number">0x19</span>, <span class="number">0xc5</span>, <span class="number">0xe3</span>, <span class="number">0x88</span>, <span class="number">0xbd</span>, <span class="number">0x4e</span>, <span class="number">0x93</span>, <span class="number">0x13</span>, <span class="number">0xf1</span>, <span class="number">0xcc</span>, <span class="number">0x47</span>, <span class="number">0xab</span>, <span class="number">0xc9</span>, <span class="number">0x48</span>, <span class="number">0x2b</span>, <span class="number">0x09</span>, <span class="number">0x50</span>, <span class="number">0x4f</span>, <span class="number">0xe9</span>, <span class="number">0xc0</span>, <span class="number">0x5e</span>, <span class="number">0xef</span>, <span class="number">0x8b</span>, <span class="number">0x85</span>, <span class="number">0xcb</span>, <span class="number">0x55</span>, <span class="number">0x70</span>]</span><br><span class="line"></span><br><span class="line">enc = get_bytes(<span class="number">0x405018</span>, <span class="number">48</span>)</span><br><span class="line"></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">48</span>):</span><br><span class="line">    temp = (enc[i] ^ xor_data[i]) - add_data[i]</span><br><span class="line">    <span class="keyword">if</span> temp &amp; <span class="number">0xFF</span> &gt; <span class="number">128</span>:</span><br><span class="line">        temp = add_data[i] - (enc[i] ^ xor_data[i]) </span><br><span class="line">    flag += <span class="built_in">chr</span>(temp &amp; <span class="number">0xFF</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br><span class="line"><span class="comment"># hitcon&#123;___7U5T_4_S1mpIE_xB6_M@G1C_4_mE0w_W@y___&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="gocrygo-248pts"><a href="#gocrygo-248pts" class="headerlink" title="gocrygo [248pts]"></a>gocrygo [248pts]</h2><h3 id="problem-description-2"><a href="#problem-description-2" class="headerlink" title="problem description"></a>problem description</h3><p>There are three files in this challenge:</p>
+<ol>
+<li><code>gocrygo</code>: A crypto-ransomware.</li>
+<li><code>gocrygo_victim_directory</code>: The directory fucked up by this ransomware.</li>
+<li><code>core</code>: The ransomware’s core dump when infecting <code>gocrygo_victim_directory</code>.</li>
+</ol>
+<p>Unfortunately, no decryption service is available :(</p>
+<p>Your goal is to:</p>
+<ol>
+<li>Reverse <code>gocrygo</code></li>
+<li>Figure out the encryption algorithm it uses</li>
+<li>Find the encryption key in the core dump</li>
+<li>Decrypt the entire infected directory.</li>
+<li>Find the flag in <code>gocrygo_victim_directory</code>.</li>
+</ol>
+<p><strong>Note</strong>: The encryption algorithm is a common cryptographic algorithm (I’m too dumb to implement one myself). In other words, <strong>please don’t waste your time figuring out the details of the algorithm</strong>. Once you know which algorithm it uses, you can move on to the next phase and try to excavate the encryption key from the core.</p>
+<h3 id="analysis-2"><a href="#analysis-2" class="headerlink" title="analysis"></a>analysis</h3><p>题目给出了勒索病毒对应的 exe、运行到某时刻的 core dump 与被勒索病毒加密的一个文件夹，我们需要找出文件夹中文件被加密的方式并恢复原始文件</p>
+<p>关键在于通过分析 exe 得知对应的加密算法，随后利用 core dump 提取内存中的 key</p>
+<p>根据题目名猜测是用 go 编写的，但尝试用工具恢复符号表未果。使用 IDA 分析 exe 并查看字符串，可以看到 <code>crypto/des</code> 相关字符串，推测是使用了 go 中相应模块进行加密操作</p>
+<p>在分析过程中，我找到的突破口是 <code>0x2074D3</code> 处对应的字符串，借助 CyberChef 可以识别出来该字符串是 <code>base64 + base85</code> 加密后的结果，交叉引用可以最终定位到 <code>sub_221A61</code> 函数，该函数为遍历文件夹下文件并进行加密的核心函数</p>
+<p>分析该函数内部调用到的其他函数，可知：</p>
+<ul>
+<li>sub_2214EB(char* ptr, uint length): base85 + base64 解密 ptr 处长度 length 的字符串</li>
+<li>sub_21406C(char* src, uint src_length, char* dst, uint dst_length): src 与 dst 的 strncmp</li>
+<li>sub_212FDD(…): go 中 runtime 的 new 操作</li>
+<li>sub_21332F(char* err, uint length): panic 并输出 err 处 length 长度的字符串作为错误提示</li>
+<li>sub_220965(…): 遍历文件夹并匹配对应文件或文件夹</li>
+<li>sub_223E5A(…): 调用加密函数，对文件进行加密</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">sub_223E5A</span><span class="params">(__int64 a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">sub_222A30</span>(*a1, *(a1 + <span class="number">8</span>), *(a1 + <span class="number">16</span>), *(a1 + <span class="number">24</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>gdb 调试并在该函数设下断点，该函数参数对应的类型是一个结构体，其中 key 在 <code>*(*(a1 + 24) + 8)</code> 处，对应长度 24 bytes，基本可以确定使用的加密算法是 Tripple DES</p>
+<p>结合对 <code>sub_222A30</code> 函数的静态分析，并对照 <a target="_blank" rel="noopener" href="https://github.com/golang/go/blob/master/src/crypto/des/cipher.go">https://github.com/golang/go/blob/master/src/crypto/des/cipher.go</a> 中 3DES 初始化的实现，可在下图位置得知加密使用的模式为 <code>3DES-CTR</code></p>
+<p><img src="/HITCON%202022%20Reverse%20WriteUp/sub_222A30.png" class="lazy" data-srcset="/HITCON%202022%20Reverse%20WriteUp/sub_222A30.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAABlBMVEXMzMyWlpYU2uzLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNgAAAAAgAB9HFkpgAAAABJRU5ErkJggg==" alt="sub_222A30"></p>
+<p>在提取密钥的过程中，最初的思路是通过 gdb 的 core 命令加载 core dump，然后查看调用栈定位 dump point，之后另起 gdb 在相同位置下断点正常调试程序，命中断点后查看此时 key 在后者栈上的位置，通过偏移计算前者 key 在栈上的位置。实际操作过程中，由于栈上存有环境变量等其他信息，导致这个偏移并非准确，也就是正常调试的环境与 core dump 中的环境并不一致</p>
+<p>幸运的是，调试过程中留意到，key 所在地址的后方留有 <code>/dev/urandom</code> 字符串，将该字符串作为标志在 gdb 中使用 search 命令检索，最终顺利找到 key 所在地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; x/8gx 0x7fecc3580040</span><br><span class="line">0x7fecc3580040:	0xbd349a8f52ae89b3	0x1b8566979b593598</span><br><span class="line">0x7fecc3580050:	0x18a320b78025b482	0x00706f746b736544</span><br><span class="line">0x7fecc3580060:	0x6172752f7665642f	0x000000006d6f646e</span><br><span class="line">0x7fecc3580070:	0x0000000000000000	0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>至此，我们找到了 3DES-CTR 加密所用到的 key，iv 位于被加密文件的前 8 字节，得解</p>
+<h3 id="solver-script-2"><a href="#solver-script-2" class="headerlink" title="solver script"></a>solver script</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;bytes&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/hex&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/des&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/cipher&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	txtFile, err := os.Open(<span class="string">&quot;gocrygo_victim_directory/Desktop/flаg.txt.qq&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> txtFile.Close()</span><br><span class="line"></span><br><span class="line">	picFile, err := os.Open(<span class="string">&quot;gocrygo_victim_directory/Pictures/rickroll.jpg.qq&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> picFile.Close()</span><br><span class="line"></span><br><span class="line">	txtData, err := ioutil.ReadAll(txtFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	picData, err := ioutil.ReadAll(picFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	tripleKey, _ := hex.DecodeString(<span class="string">&quot;b389ae528f9a34bd9835599b9766851b82b42580b720a318&quot;</span>)</span><br><span class="line">	txtPlaintext, _ := TripleDesDecrypt(txtData, []<span class="type">byte</span>(tripleKey))</span><br><span class="line">	picPlaintext, _ := TripleDesDecrypt(picData, []<span class="type">byte</span>(tripleKey))</span><br><span class="line">	</span><br><span class="line">	ioutil.WriteFile(<span class="string">&quot;flag.txt&quot;</span>, txtPlaintext, <span class="number">0664</span>)</span><br><span class="line">	ioutil.WriteFile(<span class="string">&quot;rickroll.jpg&quot;</span>, picPlaintext, <span class="number">0664</span>)</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;%s&quot;</span>, txtPlaintext)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TripleDesDecrypt</span><span class="params">(ciphertext, key []<span class="type">byte</span>)</span></span> ([]<span class="type">byte</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	ciphertext = PKCS5Padding(ciphertext, des.BlockSize)</span><br><span class="line">	block, err := des.NewTripleDESCipher(key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	iv := ciphertext[:des.BlockSize]</span><br><span class="line"></span><br><span class="line">	decrypter := cipher.NewCTR(block, iv)</span><br><span class="line">	plaintext := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="built_in">len</span>(ciphertext) - <span class="number">8</span>)</span><br><span class="line">	decrypter.XORKeyStream(plaintext, ciphertext[des.BlockSize:])</span><br><span class="line">	plaintext = PKCS5UnPadding(plaintext)</span><br><span class="line">	<span class="keyword">return</span> plaintext, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PKCS5Padding</span><span class="params">(data []<span class="type">byte</span>, blockSize <span class="type">int</span>)</span></span> []<span class="type">byte</span> &#123;</span><br><span class="line">	padding := blockSize - <span class="built_in">len</span>(data) % blockSize</span><br><span class="line">	padtext := bytes.Repeat([]<span class="type">byte</span>&#123;<span class="type">byte</span>(padding)&#125;, padding)</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">append</span>(data, padtext...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PKCS5UnPadding</span><span class="params">(data []<span class="type">byte</span>)</span></span> []<span class="type">byte</span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(data)</span><br><span class="line">	unpadding := <span class="type">int</span>(data[length - <span class="number">1</span>])</span><br><span class="line">	<span class="keyword">return</span> data[:(length - unpadding)]</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// hitcon&#123;always_gonna_make_you_cry_always_gonna_say_goodbye&#125;</span></span><br></pre></td></tr></table></figure>
+    </div>
+     
+    <div class="post-footer__meta"><p>updated at 2022-12-02</p></div> 
+    <div class="post-entry__tags"><a href="/tags/reverse/" class="post-tags__link button"># reverse</a><a href="/tags/writeup/" class="post-tags__link button"># writeup</a></div> 
+</article>
+
+
+
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="Back to Top" title="Back to Top">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2022 <a href="/">arcovegle&#39;s blog</a>
+        </p>
+    
+    
+</footer>
+
+        </div>
+        
+    <script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+    <script>
+        window.lazyLoadOptions = {
+            elements_selector: ".lazy",
+            threshold: 0
+        };
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.css">
+
+    
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.js"></script>
+
+    <script>
+        let lazyloadT = Boolean('true'),
+            auto_fancybox = Boolean('true')
+        if (auto_fancybox) {
+            $(".post__content").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        } else {
+            $(".post__content").find("fancybox").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        }
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+
+    </body>
+</html>
