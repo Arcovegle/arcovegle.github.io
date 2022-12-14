@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>RCTF 2022 Reverse Writeup | arcovegle&#39;s blog</title>
+
+
+    <meta name="keywords" content="reverse, writeup">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="Preface CheckYourKey recover string decrypt   web_run huowang solve maze bruteforce   picStore checkserver RTTT rdefender  Preface2023 年 XCTF 联赛第一站，虽然是在家打的比赛，氛围不如在战队实验室，但和队友远程协作也使得逆向的过程没有那么孤独。48 小时的比">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RCTF 2022 Reverse Writeup">
+<meta property="og:url" content="http://arcovegle.github.io/2022/12/14/RCTF%202022%20Reverse%20Writeup/index.html">
+<meta property="og:site_name" content="arcovegle&#39;s blog">
+<meta property="og:description" content="Preface CheckYourKey recover string decrypt   web_run huowang solve maze bruteforce   picStore checkserver RTTT rdefender  Preface2023 年 XCTF 联赛第一站，虽然是在家打的比赛，氛围不如在战队实验室，但和队友远程协作也使得逆向的过程没有那么孤独。48 小时的比">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://arcovegle.github.io/2022/12/14/RCTF%202022%20Reverse%20Writeup/checkyourkey_decrypt.png">
+<meta property="og:image" content="http://arcovegle.github.io/2022/12/14/RCTF%202022%20Reverse%20Writeup/rttt_xor_in_while.png">
+<meta property="article:published_time" content="2022-12-14T13:09:33.000Z">
+<meta property="article:modified_time" content="2022-12-14T13:17:05.677Z">
+<meta property="article:author" content="arcovegle">
+<meta property="article:tag" content="reverse">
+<meta property="article:tag" content="writeup">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://arcovegle.github.io/2022/12/14/RCTF%202022%20Reverse%20Writeup/checkyourkey_decrypt.png">
+
+
+    
+<link rel="stylesheet" href="/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="/css/highlight/default.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="/css/highlight/dark.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/style/dark.css">
+
+    
+<script src="/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/" class="button">
+            <span class="logo__text">arcovegle&#39;s blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/" class="navbar-menu button">Home</a>
+                
+                    <a href="/archives/" class="navbar-menu button">Archives</a>
+                
+                    <a href="/about/" class="navbar-menu button">About</a>
+                
+            </div>
+        
+        
+        
+    <a href="/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/" class="dropdown-menu button">Home</a>
+                
+                    <a href="/archives/" class="dropdown-menu button">Archives</a>
+                
+                    <a href="/about/" class="dropdown-menu button">About</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        RCTF 2022 Reverse Writeup
+    </h1>
+    <div class="post-title__meta">
+        <a href="/archives/2022/12/" class="post-meta__date button">2022-12-14</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+
+<article class="post content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <ul>
+<li><a href="#Preface">Preface</a></li>
+<li><a href="#CheckYourKey">CheckYourKey</a><ul>
+<li><a href="#recover-string">recover string</a></li>
+<li><a href="#decrypt">decrypt</a></li>
+</ul>
+</li>
+<li><a href="#web-run">web_run</a></li>
+<li><a href="#huowang">huowang</a><ul>
+<li><a href="#solve-maze">solve maze</a></li>
+<li><a href="#bruteforce">bruteforce</a></li>
+</ul>
+</li>
+<li><a href="#picStore">picStore</a></li>
+<li><a href="#checkserver">checkserver</a></li>
+<li><a href="#RTTT">RTTT</a></li>
+<li><a href="#rdefender">rdefender</a></li>
+</ul>
+<h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>2023 年 XCTF 联赛第一站，虽然是在家打的比赛，氛围不如在战队实验室，但和队友远程协作也使得逆向的过程没有那么孤独。48 小时的比赛，逆向部分 7 道题目，有些强队在距离比赛结束还有 15 小时前就 AK 了，而我在比赛结束前 3 小时才终于提交了最后一道 rdefender。</p>
+<p>反思了一下，除了 M1 Mac 上调试 x86_64 小有不便之外，根本原因还是对 lua 以及 rust 相关逆向不太熟悉，导致比较多的时间都消耗在了试错上。除了语言特性的因素，如果在逆向过程中可以快速识别出关键结构体，也会大大加快解题的速度，而以上两个问题都需要有相关的经验做基础，需要在平时多积累、多分析。</p>
+<p>此外，huowang 这道题目中包含 unicorn 模拟执行的部分，虽然在实际解题过程中并没有涉及，但在以后的学习中有必要专门研究一下，以免出现将来在比赛过程中现学的窘境。</p>
+<h2 id="CheckYourKey"><a href="#CheckYourKey" class="headerlink" title="CheckYourKey"></a>CheckYourKey</h2><p>和今年祥云杯 GetTheCorrectKey 使用了相同的 trick，即数据在 <code>.init_array</code> 中做了预处理解密，主要考察的是 native so 加载的过程</p>
+<p>需要注意的是，native 函数 ooxx 在实际调用过程中并非调用 <code>Java_com_ctf_CheckYourKey_MainActivity_ooxx</code> ，而是调用的 <code>sub_8965</code> ，后者是在 JNI_OnLoad 时通过 <code>Register_Natives</code> 函数指定的</p>
+<p>加密算法的识别部分并不困难，根据特征值及比对字符串格式不难最终确认出加密为 AES-ECB + base58 + 换表 base64</p>
+<h3 id="recover-string"><a href="#recover-string" class="headerlink" title="recover string"></a>recover string</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ida_bytes <span class="keyword">import</span> get_byte</span><br><span class="line"></span><br><span class="line"><span class="comment"># addr, length, val</span></span><br><span class="line">modify = [(<span class="number">0x41080</span>, <span class="number">0x04</span>, <span class="number">0x17</span>),</span><br><span class="line">          (<span class="number">0x41088</span>, <span class="number">0x09</span>, <span class="number">0xad</span>),</span><br><span class="line">          (<span class="number">0x41094</span>, <span class="number">0x0f</span>, <span class="number">0xc9</span>),</span><br><span class="line">          (<span class="number">0x410A4</span>, <span class="number">0x05</span>, <span class="number">0x5a</span>),</span><br><span class="line">          (<span class="number">0x410b0</span>, <span class="number">0x1A</span>, <span class="number">0xC9</span>),</span><br><span class="line">          (<span class="number">0x410cc</span>, <span class="number">0x04</span>, <span class="number">0x4A</span>),</span><br><span class="line">          (<span class="number">0x410d4</span>, <span class="number">0x05</span>, <span class="number">0x75</span>),</span><br><span class="line">          (<span class="number">0x410dc</span>, <span class="number">0x01</span>, <span class="number">0xd9</span>),</span><br><span class="line">          (<span class="number">0x410e0</span>, <span class="number">0x02</span>, <span class="number">0xb4</span>),</span><br><span class="line">          (<span class="number">0x410f0</span>, <span class="number">0x10</span>, <span class="number">0x2d</span>),</span><br><span class="line">          (<span class="number">0x41104</span>, <span class="number">0x09</span>, <span class="number">0x8c</span>),</span><br><span class="line">          (<span class="number">0x41110</span>, <span class="number">0x0e</span>, <span class="number">0xe2</span>),</span><br><span class="line">          (<span class="number">0x41120</span>, <span class="number">0x1e</span>, <span class="number">0x46</span>),</span><br><span class="line">          (<span class="number">0x41140</span>, <span class="number">0x10</span>, <span class="number">0xff</span>),</span><br><span class="line">          (<span class="number">0x41160</span>, <span class="number">0x20</span>, <span class="number">0x65</span>),</span><br><span class="line">          (<span class="number">0x41190</span>, <span class="number">0x21</span>, <span class="number">0x5b</span>),</span><br><span class="line">          (<span class="number">0x411b4</span>, <span class="number">0x04</span>, <span class="number">0xec</span>),</span><br><span class="line">          (<span class="number">0x411c0</span>, <span class="number">0x15</span>, <span class="number">0xce</span>),</span><br><span class="line">          (<span class="number">0x411d8</span>, <span class="number">0x0f</span>, <span class="number">0x3a</span>),</span><br><span class="line">          (<span class="number">0x411f0</span>, <span class="number">0x19</span>, <span class="number">0x1f</span>),</span><br><span class="line">          (<span class="number">0x4120c</span>, <span class="number">0x0b</span>, <span class="number">0xc3</span>),</span><br><span class="line">          (<span class="number">0x41218</span>, <span class="number">0x05</span>, <span class="number">0x6d</span>),</span><br><span class="line">          (<span class="number">0x41220</span>, <span class="number">0x0d</span>, <span class="number">0x41</span>),</span><br><span class="line">          (<span class="number">0x41230</span>, <span class="number">0x09</span>, <span class="number">0xf4</span>),</span><br><span class="line">          (<span class="number">0x4123c</span>, <span class="number">0x0c</span>, <span class="number">0x7b</span>),</span><br><span class="line">          (<span class="number">0x41250</span>, <span class="number">0x43</span>, <span class="number">0xa3</span>),</span><br><span class="line">          (<span class="number">0x41010</span>, <span class="number">0x3a</span>, <span class="number">0xaf</span>)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> modify:</span><br><span class="line">    temp = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(item[<span class="number">1</span>]):</span><br><span class="line">        temp += <span class="built_in">chr</span>(get_byte(item[<span class="number">0</span>] + i) ^ item[<span class="number">2</span>])</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(item[<span class="number">0</span>]), temp)</span><br><span class="line"></span><br><span class="line">table = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> addr <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0x33f0f</span>, <span class="number">0x33f4f</span>):</span><br><span class="line">    table += <span class="built_in">chr</span>(get_byte(addr))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;base64 table: &#x27;</span> + table)</span><br></pre></td></tr></table></figure>
+
+<h3 id="decrypt"><a href="#decrypt" class="headerlink" title="decrypt"></a>decrypt</h3><p><img src="/2022/12/14/RCTF%202022%20Reverse%20Writeup/checkyourkey_decrypt.png" class="lazy" data-srcset="/2022/12/14/RCTF%202022%20Reverse%20Writeup/checkyourkey_decrypt.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAABlBMVEXMzMyWlpYU2uzLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNgAAAAAgAB9HFkpgAAAABJRU5ErkJggg==" alt="checkyourkey_decrypt"></p>
+<h2 id="web-run"><a href="#web-run" class="headerlink" title="web_run"></a>web_run</h2><p>一道简单的 webassembly 逆向，由于看主逻辑的 wat 没有很复杂，便没有借助反编译工具进行分析，而是选择直接看 wat + Chrome 动态调试，分析后程序逻辑如下：</p>
+<ul>
+<li>程序一共接收两次输入，第一次要求输出对应的时间戳，第二次要求输入 ca_value</li>
+<li>func10 接收第一个输入，并在转换后与硬编码 202211110054 进行比较，如果相等则输出 <code>This is one of the best &amp;&amp; happy moments for me. I won&#39;t let you pass!</code> 随后退出</li>
+<li>func9 根据转换后的时间戳生成一个 uuid 格式的字符串存入内存中，该字符串即为后续比对的 ca_value</li>
+<li>之后程序读入第二个输入即 ca_value，与 func9 生成的 uuid 格式字符串比对，正确则输出 <code>right value,But the time is not the time I want to hide\ngo ahead!!</code></li>
+</ul>
+<p>由于输入正确的时间戳反而程序会退出，无法生成该时间戳对应的 ca_value，因此思路是 patch wasm 对应逻辑，使得输入正确时间戳 2022&#x2F;11&#x2F;11 00:54 后可以正常继续运行，并在调用 func9 后从内存中 dump 出对应的 ca_value</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mem = <span class="keyword">new</span> <span class="title class_">Uint8Array</span>(wasmMemory.<span class="property">buffer</span>);</span><br><span class="line"><span class="keyword">var</span> uuid = mem.<span class="title function_">slice</span>(<span class="number">0x5010c0</span>, <span class="number">0x5010c0</span> + <span class="number">0x24</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> dump = <span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">0x24</span>; i++) &#123;</span><br><span class="line">	dump += <span class="title class_">String</span>.<span class="title function_">fromCharCode</span>(uuid[i]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(dump);</span><br><span class="line"><span class="comment">// RCTF&#123;40959ea7-26e0-4c9d-8f4a-62faf14ff392&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="huowang"><a href="#huowang" class="headerlink" title="huowang"></a>huowang</h2><p>程序有两个校验，第一个是 unicorn 模拟执行相关的，第二个可以明显看出是迷宫</p>
+<p>由于输入即为迷宫路径，可以直接 dfs 出迷宫的所有可行路径输入回程序进行爆破</p>
+<h3 id="solve-maze"><a href="#solve-maze" class="headerlink" title="solve maze"></a>solve maze</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ida_bytes <span class="keyword">import</span> get_byte</span><br><span class="line"></span><br><span class="line">addr = <span class="number">0x18D7180</span></span><br><span class="line"></span><br><span class="line">i = <span class="number">0</span></span><br><span class="line">maze = []</span><br><span class="line"><span class="keyword">while</span> <span class="built_in">len</span>(maze) &lt; <span class="number">23</span> * <span class="number">23</span>:</span><br><span class="line">    <span class="keyword">if</span> get_byte(addr + i) != <span class="number">0</span>:</span><br><span class="line">        maze.append(get_byte(addr + i))</span><br><span class="line">    i += <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dfs</span>(<span class="params">maze, x, y, step, path = <span class="string">&#x27;&#x27;</span>, record = [<span class="number">0</span> <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="params"><span class="number">23</span> * <span class="number">23</span></span>)], rounds = <span class="number">0</span></span>):</span><br><span class="line">    nxt = [(-<span class="number">1</span>, <span class="number">0</span>), (<span class="number">1</span>, <span class="number">0</span>), (<span class="number">0</span>, -<span class="number">1</span>), (<span class="number">0</span>, <span class="number">1</span>)]</span><br><span class="line">    <span class="keyword">if</span> x == <span class="number">22</span> <span class="keyword">and</span> y == <span class="number">21</span>:</span><br><span class="line">        <span class="built_in">print</span>(path)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>):</span><br><span class="line">        nx = x + nxt[i][<span class="number">0</span>]</span><br><span class="line">        ny = y + nxt[i][<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">if</span> <span class="number">0</span> &lt;= nx &lt; <span class="number">23</span> <span class="keyword">and</span> <span class="number">0</span> &lt;= ny &lt; <span class="number">23</span> <span class="keyword">and</span> record[nx * <span class="number">23</span> + ny] == <span class="number">0</span> <span class="keyword">and</span> maze[nx * <span class="number">23</span> + ny] == <span class="number">0x20</span>:</span><br><span class="line">            record[nx * <span class="number">23</span> + ny] = <span class="number">1</span></span><br><span class="line">            path += step[i]</span><br><span class="line">            dfs(maze, nx, ny, step, path, record, rounds + <span class="number">1</span>)</span><br><span class="line">            path = path[:-<span class="number">1</span>]</span><br><span class="line">            record[nx * <span class="number">23</span> + ny] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line"> </span><br><span class="line">   </span><br><span class="line">dfs(maze, <span class="number">0</span>, <span class="number">1</span>, <span class="string">&#x27;wsad&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="bruteforce"><a href="#bruteforce" class="headerlink" title="bruteforce"></a>bruteforce</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> hashlib <span class="keyword">import</span> md5</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;path&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">	path = f.readlines()</span><br><span class="line"></span><br><span class="line">ans = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(path)):</span><br><span class="line">	io = process([<span class="string">&#x27;qemu-x86_64&#x27;</span>, <span class="string">&#x27;-L&#x27;</span>, <span class="string">&#x27;/usr/x86_64-linux-gnu/&#x27;</span>, <span class="string">&#x27;./HuoWang&#x27;</span>])</span><br><span class="line">	temp = path[i].replace(<span class="string">&#x27;\n&#x27;</span>, <span class="string">&#x27;&#x27;</span>).encode()</span><br><span class="line">	io.sendline(temp)</span><br><span class="line">	result = io.recvline(timeout=<span class="number">10</span>)</span><br><span class="line">	<span class="keyword">if</span> <span class="string">b&#x27;Father&#x27;</span> <span class="keyword">in</span> result:</span><br><span class="line">		ans.append(md5(temp).hexdigest())</span><br><span class="line">	io.close()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(ans)</span><br><span class="line"><span class="comment"># [&#x27;79081c1b246fc9a59f684cb4e454b8a3&#x27;, &#x27;e1f9e3d166dcec5ecff3a2c5fbdeab3b&#x27;]</span></span><br><span class="line"><span class="comment"># RCTF&#123;e1f9e3d166dcec5ecff3a2c5fbdeab3b&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>和出题人反馈了有一个多解后，加了最短路径的 hint，问题不大</p>
+<h2 id="picStore"><a href="#picStore" class="headerlink" title="picStore"></a>picStore</h2><p>lua 5.3.3 的逆向，加载 .bin 文件字节码执行</p>
+<p>unluac 恢复 lua 源码失败，观察 .bin 文件头部发现与正常并不相同，逆向分析可执行文件并与 lua 源码进行对比可以发现程序改动了源码中对应 <a target="_blank" rel="noopener" href="https://github.com/lua/lua/blob/v5.3.3/lundump.c">lundump.c</a> 的部分，将 <code>LoadByte</code> [sub_48180], <code>LoadInt</code> [sub_481D0], <code>LoadNumber</code> [sub_48110], <code>LoadInteger</code> [sub_480A0] 四个函数中增加了取反操作，于是可以写脚本还原，队友 immortal 在这里是用 hook 做的，我觉得相当优雅。之后就可以正常通过 unluac 等其他工具还原出 lua 源码了，版本对应即可</p>
+<p>lua 的源码并不难懂，主要的逻辑就是将输入字节序列逐个运算后，作为 index 从硬编码数组中取值，随后传入 <code>a_AHy3JniQH4</code> 函数进行验证，而该函数是在可执行文件中通过 <code>lua_setglobal</code> 与 <code>lua_pushcclosure</code> 提前注册的，实际调用的是 <code>check_result_23_impl</code> ，z3 求解即可</p>
+<p>其实逆向部分的工作就到此为止，但是在比赛过程中，我也耗费了不小的经历在逆向程序的交互逻辑上，即 bmp 的 upload、download 等操作，对于本题来说也许是多此一举，但对比赛中同名的 pwn 题也许能有所帮助，仅供参考</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">debug = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> debug:</span><br><span class="line">	context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">	io = process([<span class="string">&#x27;qemu-x86_64&#x27;</span>, <span class="string">&#x27;-g&#x27;</span>, <span class="string">&#x27;12345&#x27;</span>, <span class="string">&#x27;-L&#x27;</span>, <span class="string">&#x27;/usr/x86_64-linux-gnu/&#x27;</span>, <span class="string">&#x27;./picStore&#x27;</span>])</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	io = remote(<span class="string">&#x27;49.0.203.6&#x27;</span>, <span class="number">3498</span>) <span class="comment"># rev ip:port</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">binary</span>(<span class="params">n</span>):</span><br><span class="line">	res = <span class="string">b&#x27;&#x27;</span></span><br><span class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>):</span><br><span class="line">		<span class="keyword">if</span> n &amp; <span class="number">1</span> == <span class="number">0</span>:</span><br><span class="line">			res += <span class="string">b&#x27;\x00&#x27;</span></span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			res += <span class="string">b&#x27;\x01&#x27;</span></span><br><span class="line">		n &gt;&gt;= <span class="number">1</span></span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">upload</span>(<span class="params">data</span>):</span><br><span class="line">	<span class="keyword">global</span> io</span><br><span class="line">	io.recvuntil(<span class="string">b&#x27;choice&gt;&gt; &#x27;</span>)</span><br><span class="line">	io.sendline(<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line">	io.recvuntil(<span class="string">b&#x27;img data: &#x27;</span>)</span><br><span class="line">	io.send(data)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">download</span>(<span class="params">idx</span>):</span><br><span class="line">	<span class="keyword">global</span> io</span><br><span class="line">	io.recvuntil(<span class="string">b&#x27;choice&gt;&gt; &#x27;</span>)</span><br><span class="line">	io.sendline(<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">	io.recvuntil(<span class="string">b&#x27;link: &#x27;</span>)</span><br><span class="line">	io.sendline(<span class="built_in">str</span>(idx))</span><br><span class="line">	<span class="comment"># server output img data then</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">delete</span>(<span class="params">idx</span>):</span><br><span class="line">	<span class="keyword">global</span> io</span><br><span class="line">	io.recvuntil(<span class="string">b&#x27;choice&gt;&gt; &#x27;</span>)</span><br><span class="line">	io.sendline(<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">	io.recvuntil(<span class="string">b&#x27;link: &#x27;</span>)</span><br><span class="line">	io.sendline(<span class="built_in">str</span>(idx))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">list</span>():</span><br><span class="line">	<span class="keyword">global</span> io</span><br><span class="line">	io.recvuntil(<span class="string">b&#x27;choice&gt;&gt; &#x27;</span>)</span><br><span class="line">	io.sendline(<span class="string">b&#x27;4&#x27;</span>)</span><br><span class="line">	<span class="comment"># server output list result then</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check</span>():</span><br><span class="line">	<span class="keyword">global</span> io</span><br><span class="line">	io.recvuntil(<span class="string">b&#x27;choice&gt;&gt; &#x27;</span>)</span><br><span class="line">	io.sendline(<span class="string">b&#x27;5&#x27;</span>)</span><br><span class="line">	<span class="comment"># server output check result then</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">exit</span>():</span><br><span class="line">	<span class="keyword">global</span> io</span><br><span class="line">	io.recvuntil(<span class="string">b&#x27;choice&gt;&gt; &#x27;</span>)</span><br><span class="line">	io.sendline(<span class="string">b&#x27;6&#x27;</span>)</span><br><span class="line">	<span class="comment"># server bye</span></span><br><span class="line"></span><br><span class="line">header = <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;424d&#x27;</span>)		<span class="comment"># magic</span></span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;36120000&#x27;</span>)	<span class="comment"># file size</span></span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;00120000&#x27;</span>)	<span class="comment"># image size</span></span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;36000000&#x27;</span>)	<span class="comment"># total header size: 0xe + 0x28</span></span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;28000000&#x27;</span>)	<span class="comment"># info header size: 0x28</span></span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;40000000&#x27;</span>)	<span class="comment"># width</span></span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;18000000&#x27;</span>)	<span class="comment"># height</span></span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;0100&#x27;</span>)		<span class="comment"># color planes</span></span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;1800&#x27;</span>)		<span class="comment"># bits per pixel</span></span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;00000000&#x27;</span>)</span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;00000000&#x27;</span>)</span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;00000000&#x27;</span>)</span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;00000000&#x27;</span>)</span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;00000000&#x27;</span>)</span><br><span class="line">header += <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;00000000&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">assert</span>(<span class="built_in">len</span>(header) == <span class="number">0x36</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ans is solved by z3</span></span><br><span class="line">ans = [<span class="number">33</span>, <span class="number">146</span>, <span class="number">208</span>, <span class="number">207</span>, <span class="number">51</span>, <span class="number">52</span>, <span class="number">230</span>, <span class="number">190</span>, <span class="number">199</span>, <span class="number">211</span>, <span class="number">110</span>, <span class="number">51</span>, <span class="number">207</span>, <span class="number">190</span>, <span class="number">46</span>, <span class="number">51</span>, <span class="number">79</span>, <span class="number">183</span>, <span class="number">73</span>, <span class="number">103</span>, <span class="number">42</span>, <span class="number">103</span>, <span class="number">197</span>, <span class="number">83</span>, <span class="number">221</span>, <span class="number">29</span>, <span class="number">209</span>, <span class="number">240</span>, <span class="number">194</span>, <span class="number">26</span>]</span><br><span class="line">table = [<span class="number">105</span>, <span class="number">244</span>, <span class="number">63</span>, <span class="number">10</span>, <span class="number">24</span>, <span class="number">169</span>, <span class="number">248</span>, <span class="number">107</span>, <span class="number">129</span>, <span class="number">138</span>, <span class="number">25</span>, <span class="number">182</span>, <span class="number">96</span>, <span class="number">176</span>, <span class="number">14</span>, <span class="number">89</span>, <span class="number">56</span>, <span class="number">229</span>, <span class="number">206</span>, <span class="number">19</span>, <span class="number">23</span>, <span class="number">21</span>, <span class="number">22</span>, <span class="number">198</span>, <span class="number">179</span>, <span class="number">167</span>, <span class="number">152</span>, <span class="number">66</span>, <span class="number">28</span>, <span class="number">201</span>, <span class="number">213</span>, <span class="number">80</span>, <span class="number">162</span>, <span class="number">151</span>, <span class="number">102</span>, <span class="number">36</span>, <span class="number">91</span>, <span class="number">37</span>, <span class="number">50</span>, <span class="number">17</span>, <span class="number">170</span>, <span class="number">41</span>, <span class="number">3</span>, <span class="number">84</span>, <span class="number">85</span>, <span class="number">226</span>, <span class="number">131</span>, <span class="number">38</span>, <span class="number">71</span>, <span class="number">32</span>, <span class="number">18</span>, <span class="number">142</span>, <span class="number">70</span>, <span class="number">39</span>, <span class="number">112</span>, <span class="number">220</span>, <span class="number">16</span>, <span class="number">219</span>, <span class="number">159</span>, <span class="number">222</span>, <span class="number">11</span>, <span class="number">119</span>, <span class="number">99</span>, <span class="number">203</span>, <span class="number">47</span>, <span class="number">148</span>, <span class="number">185</span>, <span class="number">55</span>, <span class="number">93</span>, <span class="number">48</span>, <span class="number">153</span>, <span class="number">113</span>, <span class="number">1</span>, <span class="number">237</span>, <span class="number">35</span>, <span class="number">75</span>, <span class="number">67</span>, <span class="number">155</span>, <span class="number">161</span>, <span class="number">74</span>, <span class="number">108</span>, <span class="number">76</span>, <span class="number">181</span>, <span class="number">233</span>, <span class="number">186</span>, <span class="number">44</span>, <span class="number">125</span>, <span class="number">232</span>, <span class="number">88</span>, <span class="number">8</span>, <span class="number">95</span>, <span class="number">163</span>, <span class="number">200</span>, <span class="number">249</span>, <span class="number">120</span>, <span class="number">243</span>, <span class="number">174</span>, <span class="number">212</span>, <span class="number">252</span>, <span class="number">234</span>, <span class="number">58</span>, <span class="number">101</span>, <span class="number">228</span>, <span class="number">86</span>, <span class="number">109</span>, <span class="number">144</span>, <span class="number">104</span>, <span class="number">121</span>, <span class="number">117</span>, <span class="number">87</span>, <span class="number">15</span>, <span class="number">132</span>, <span class="number">12</span>, <span class="number">20</span>, <span class="number">165</span>, <span class="number">115</span>, <span class="number">136</span>, <span class="number">135</span>, <span class="number">118</span>, <span class="number">69</span>, <span class="number">68</span>, <span class="number">2</span>, <span class="number">82</span>, <span class="number">123</span>, <span class="number">250</span>, <span class="number">251</span>, <span class="number">53</span>, <span class="number">0</span>, <span class="number">51</span>, <span class="number">221</span>, <span class="number">211</span>, <span class="number">195</span>, <span class="number">145</span>, <span class="number">140</span>, <span class="number">254</span>, <span class="number">0</span>, <span class="number">116</span>, <span class="number">43</span>, <span class="number">29</span>, <span class="number">217</span>, <span class="number">197</span>, <span class="number">183</span>, <span class="number">168</span>, <span class="number">188</span>, <span class="number">34</span>, <span class="number">218</span>, <span class="number">146</span>, <span class="number">147</span>, <span class="number">98</span>, <span class="number">149</span>, <span class="number">246</span>, <span class="number">180</span>, <span class="number">103</span>, <span class="number">33</span>, <span class="number">40</span>, <span class="number">207</span>, <span class="number">208</span>, <span class="number">192</span>, <span class="number">143</span>, <span class="number">26</span>, <span class="number">154</span>, <span class="number">225</span>, <span class="number">100</span>, <span class="number">141</span>, <span class="number">175</span>, <span class="number">124</span>, <span class="number">230</span>, <span class="number">62</span>, <span class="number">177</span>, <span class="number">205</span>, <span class="number">110</span>, <span class="number">202</span>, <span class="number">253</span>, <span class="number">173</span>, <span class="number">46</span>, <span class="number">52</span>, <span class="number">114</span>, <span class="number">164</span>, <span class="number">166</span>, <span class="number">137</span>, <span class="number">158</span>, <span class="number">122</span>, <span class="number">13</span>, <span class="number">83</span>, <span class="number">178</span>, <span class="number">133</span>, <span class="number">189</span>, <span class="number">187</span>, <span class="number">7</span>, <span class="number">184</span>, <span class="number">77</span>, <span class="number">245</span>, <span class="number">216</span>, <span class="number">190</span>, <span class="number">194</span>, <span class="number">72</span>, <span class="number">157</span>, <span class="number">172</span>, <span class="number">171</span>, <span class="number">199</span>, <span class="number">160</span>, <span class="number">45</span>, <span class="number">49</span>, <span class="number">27</span>, <span class="number">204</span>, <span class="number">81</span>, <span class="number">6</span>, <span class="number">92</span>, <span class="number">59</span>, <span class="number">209</span>, <span class="number">239</span>, <span class="number">130</span>, <span class="number">97</span>, <span class="number">61</span>, <span class="number">214</span>, <span class="number">215</span>, <span class="number">73</span>, <span class="number">90</span>, <span class="number">126</span>, <span class="number">42</span>, <span class="number">30</span>, <span class="number">240</span>, <span class="number">79</span>, <span class="number">224</span>, <span class="number">78</span>, <span class="number">223</span>, <span class="number">111</span>, <span class="number">60</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">196</span>, <span class="number">231</span>, <span class="number">106</span>, <span class="number">64</span>, <span class="number">139</span>, <span class="number">235</span>, <span class="number">150</span>, <span class="number">227</span>, <span class="number">238</span>, <span class="number">191</span>, <span class="number">127</span>, <span class="number">31</span>, <span class="number">156</span>, <span class="number">54</span>, <span class="number">241</span>, <span class="number">242</span>, <span class="number">134</span>, <span class="number">247</span>, <span class="number">128</span>, <span class="number">65</span>, <span class="number">94</span>, <span class="number">57</span>, <span class="number">210</span>, <span class="number">236</span>, <span class="number">9</span>, <span class="number">193</span>]</span><br><span class="line"><span class="keyword">assert</span> <span class="built_in">len</span>(table) == <span class="number">256</span></span><br><span class="line"></span><br><span class="line">data = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(ans)):</span><br><span class="line">	idx = table.index(ans[i])</span><br><span class="line">	data.append(binary(idx ^ i ^ <span class="number">0xff</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">29</span>):</span><br><span class="line">	<span class="comment"># upload size maximum is 0x1200</span></span><br><span class="line">	upload(header + data[i] + data[i+<span class="number">1</span>] + <span class="string">b&#x27;\x00&#x27;</span>*(<span class="number">0x1200</span>-<span class="number">0x10</span>))</span><br><span class="line"></span><br><span class="line">check()</span><br><span class="line">io.interactive()</span><br><span class="line"><span class="comment"># flag&#123;U_90t_th3_p1c5t0re_fl49!&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="checkserver"><a href="#checkserver" class="headerlink" title="checkserver"></a>checkserver</h2><p>程序本身是一个运行在本地 8080 端口的 http 服务，通过提交 POST 请求传参给 <code>authcookie</code> 进行验证</p>
+<p>通过交叉引用字符串 <code>[SUCCESS] Auth Success</code> 可以定位到函数 <code>sub_404530</code> 为 check 逻辑所在，分析了一下这里有异常处理的反调试，不过并不影响静态分析。进一步可以定位到 <code>sub_402040</code> 为加密函数，且本质为异或加密，因此可以考虑在 402355 处下断点 dump 出异或的数据</p>
+<p>由于处理请求的时候会 fork 子进程，比赛的时候还不知道子进程要怎么调试，卡了一会，但后来队友 immortal 说可以直接 set rip 进行调试，于是得解</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">data = [<span class="number">0xF8159B80</span>, <span class="number">0x69789a7e</span>, <span class="number">0xd68f4c8f</span>, <span class="number">0x6C4BA891</span>, <span class="number">0x56139417</span>, <span class="number">0x6FA391CB</span>, <span class="number">0x924380a8</span>, <span class="number">0x57eb72e9</span>, <span class="number">0x175185c2</span>, <span class="number">0x91B77F80</span>, <span class="number">0x3CC7BA6E</span>, <span class="number">0x50573938</span>, <span class="number">0x84FB73DC</span>, <span class="number">0x8FF0A08C</span>, <span class="number">0xD48F6C7B</span>, <span class="number">0x42DB7570</span>]</span><br><span class="line">xor = [<span class="number">0xE6</span>, <span class="number">0xF7</span>, <span class="number">0x74</span>, <span class="number">0x9F</span>, <span class="number">0x05</span>, <span class="number">0xAB</span>, <span class="number">0x1A</span>, <span class="number">0x50</span>, <span class="number">0xBF</span>, <span class="number">0x28</span>, <span class="number">0xB6</span>, <span class="number">0xE6</span>, <span class="number">0xA4</span>, <span class="number">0x9E</span>, <span class="number">0x7F</span>, <span class="number">0x0D</span>, <span class="number">0x22</span>, <span class="number">0xAC</span>, <span class="number">0x76</span>, <span class="number">0x60</span>, <span class="number">0xFD</span>, <span class="number">0xA6</span>, <span class="number">0x90</span>, <span class="number">0x5E</span>, <span class="number">0x91</span>, <span class="number">0xB4</span>, <span class="number">0x76</span>, <span class="number">0xA3</span>, <span class="number">0x8D</span>, <span class="number">0x43</span>, <span class="number">0x88</span>, <span class="number">0x35</span>, <span class="number">0xF4</span>, <span class="number">0xE0</span>, <span class="number">0x37</span>, <span class="number">0x6A</span>]</span><br><span class="line"></span><br><span class="line">data = <span class="built_in">list</span>(<span class="string">b&#x27;&#x27;</span>.join(<span class="built_in">map</span>(<span class="keyword">lambda</span> x: x.to_bytes(<span class="number">4</span>,<span class="string">&quot;little&quot;</span>, signed=<span class="literal">False</span>),data)))</span><br><span class="line"></span><br><span class="line">flag = [data[i] ^ xor[i] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">36</span>)]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;&#x27;</span>.join(<span class="built_in">map</span>(<span class="built_in">chr</span>, flag)))</span><br><span class="line"><span class="comment"># flag&#123;1b90d90564a58e667319451d1cb6ef&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="RTTT"><a href="#RTTT" class="headerlink" title="RTTT"></a>RTTT</h2><p>rust 逆向，无符号表，硬看的话会有不小阻碍，于是考虑编写一个 demo 结合 bindiff 恢复一下部分符号表</p>
+<p>恢复后 IDA 分析，源 rust 代码的 main 函数对应 <code>std::rt::lang_start_internal</code> 函数的第一个参数，即 <code>sub_EBF0</code> 。分析该函数首先可以注意到的就是函数内有明显的数组逐字节硬编码赋值，随后跟着一个 while(1) 的循环，循环体前面做的实际上是 rust 对于迭代器的边界检查与切片取值，关键的运算就是最后一句语句的异或操作，两段类似操作分别可以得到字符串 <code>Welc0me to RCTF 2O22</code> 与 <code>Congratulations</code></p>
+<p><img src="/2022/12/14/RCTF%202022%20Reverse%20Writeup/rttt_xor_in_while.png" class="lazy" data-srcset="/2022/12/14/RCTF%202022%20Reverse%20Writeup/rttt_xor_in_while.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAABlBMVEXMzMyWlpYU2uzLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNgAAAAAgAB9HFkpgAAAABJRU5ErkJggg==" alt="rttt_xor_in_while"></p>
+<p>逆向 <code>sub_E310</code> 可以根据算法结构识别出来是 RC4 加密，结合动态调试可知加密使用的 key 即为前面异或得到的两个字符串中的前者，同时也可以发现，传入 RC4 加密的明文是输入经过某种置换 shuffle 后得到的，并在加密后与同样是硬编码赋值的数组进行比对</p>
+<p>通过 strings 里可以看出 rust 源程序使用了 <code>rand_core-0.6.4</code> 这个库，结合静态分析定位到 sub_14FB0 函数是一个 LCG 线性同余生成，根据特征值识别出是伪随机生成相关算法，因此推测 <code>sub_FFB0</code> 为伪随机数生成函数，seed 为 0xDEADBEEF</p>
+<p>于是程序的逻辑也明朗了起来，首先将输入根据生成的伪随机数序列进行 shuffle，随后 RC4 加密后与硬编码数组比对，正确则输出 Congratulations</p>
+<p>由于 seed 为定值，在调用 RC4 函数处下断点比对原始输入与此时参数即可得知 shuffle 的映射关系，进一步可解密得到 flag</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> ARC4</span><br><span class="line"></span><br><span class="line">key = <span class="string">b&#x27;Welc0me to RCTF 2O22&#x27;</span></span><br><span class="line">before_shuffle = <span class="string">&#x27;0123456789abcdefghijklmnopqrstuvwxyzABCDEF&#x27;</span></span><br><span class="line">after_shuffle = <span class="string">&#x27;ozpBaxmtn0sqjdiF8fcyr57b93w14EgAD2uCk6lveh&#x27;</span></span><br><span class="line"></span><br><span class="line">enc = [<span class="number">0x34</span>, <span class="number">0xC2</span>, <span class="number">0x65</span>, <span class="number">0x2D</span>, <span class="number">0xDA</span>, <span class="number">0xC6</span>, <span class="number">0xB1</span>, <span class="number">0xAD</span>, <span class="number">0x47</span>, <span class="number">0xBA</span>, <span class="number">6</span>, <span class="number">0xA9</span>, <span class="number">0x3B</span>, <span class="number">0xC1</span>, <span class="number">0xCC</span>, <span class="number">0xD7</span>, <span class="number">0xF1</span>, <span class="number">0x29</span>, <span class="number">0x24</span>, <span class="number">0x39</span>, <span class="number">0x2A</span>, <span class="number">0xC0</span>, <span class="number">0x15</span>, <span class="number">2</span>, <span class="number">0x7E</span>, <span class="number">0x10</span>, <span class="number">0x66</span>, <span class="number">0x7B</span>, <span class="number">0x5E</span>, <span class="number">0xEA</span>, <span class="number">0x5E</span>, <span class="number">0xD0</span>, <span class="number">0x59</span>, <span class="number">0x46</span>, <span class="number">0xE1</span>, <span class="number">0xD6</span>, <span class="number">0x6E</span>, <span class="number">0x5E</span>, <span class="number">0xB2</span>, <span class="number">0x46</span>, <span class="number">0x6B</span>, <span class="number">0x31</span>]</span><br><span class="line"></span><br><span class="line">mapping = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(enc)):</span><br><span class="line">	mapping.append(after_shuffle.index(before_shuffle[i]))</span><br><span class="line"></span><br><span class="line">cipher = ARC4.new(key)</span><br><span class="line">plaintext = cipher.decrypt(<span class="built_in">bytes</span>(enc))</span><br><span class="line"></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> idx <span class="keyword">in</span> mapping:</span><br><span class="line">	flag += <span class="built_in">chr</span>(plaintext[idx])</span><br><span class="line"><span class="built_in">print</span>(flag)</span><br><span class="line"><span class="comment"># RCTF&#123;03C3E9B2-E37F-2FD6-CD7E-57C91D77DD61&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="rdefender"><a href="#rdefender" class="headerlink" title="rdefender"></a>rdefender</h2><p>同样是 rust 逆向，不过给了符号表，是很有意思的一道题目，直接说逆向后的结论</p>
+<ul>
+<li>有两个关键的结构体，程序限制二者最多有 16 个，其中一个在这里称作 <code>string_struct</code> ，大小为 0x30，另外一个称作 <code>check_struct</code> ，大小为 0x20，二者结构如下</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">string_struct:</span><br><span class="line">     |--------------------|--------------------|</span><br><span class="line">0x00 |      ptr_name      |     name_length    |</span><br><span class="line">     |--------------------|--------------------|</span><br><span class="line">0x10 |     name_length    |      ptr_string    |</span><br><span class="line">     |--------------------|--------------------|</span><br><span class="line">0x20 |    string_length   |    string_length   |</span><br><span class="line">     |--------------------|--------------------|</span><br><span class="line">check_struct:</span><br><span class="line">     |--------------------|--------------------|</span><br><span class="line">0x00 |      ptr_data      |     data_length    |</span><br><span class="line">     |--------------------|--------------------|</span><br><span class="line">0x10 |     data_length    |      check_mode    |</span><br><span class="line">     |--------------------|--------------------|</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>关于交互，每次 while 循环开始首先读入 8 字节，输入的第一字节是模式，0 为读入一个 string_struct，2 为读入一个 check_struct，1 为进入 check 流程</li>
+<li>关于数据的读入，程序封装了一个 <code>get_data</code> 函数，首先读入 4 字节 dword 作为数据长度，随后读入对应长度的数据</li>
+<li>关于读入 string_struct 流程，首先读入的 8 字节中，第 1 字节为 <code>\x00</code> ，随后 7 个字节通过 <code>from_utf8_lossy</code> 转换为字符串作为结构体的 name，在此之后调用 get_data 读取结构体的 string 并将构造好的结构体 push 到 string_struct 的 verctor 中</li>
+<li>关于读入 check_struct 流程，首先读入的 8 字节中，第 1 字节为 <code>\x02</code> ，随后 1 字节为 check_mode，最后 6 字节为固定的 <code>\xd1\x66\x9c\x89\xf3\x5b</code> ，在此之后调用 get_data 读取结构体的 data 并将构造好的结构体 push 到 check_struct 的 verctor 中</li>
+<li>关于 check 流程，读入的 8 字节中，第 1 字节为 <code>\x01</code> ，随后 2 字节，分别为 string_struct 与 check_struct 的下标，该流程也有相应的 3 种模式的 check_mode，check_mode 是读入 check_struct 时根据输入指定的<ul>
+<li>check_mode 0: 将 string_struct 中 string 做以 0x83 为基的进制转换，结果与 check_struct 中 data (4 byte) 对应的 dword 比对</li>
+<li>check_mode 1: 检查 check_struct 中 data (1 byte) 是否出现在 string_struct 的 string 中</li>
+<li>check_mode 2: 将 check_struct 中 data 作为 vm 指令，与 string_struct 中 string 一同作为参数传入 <code>check</code> 函数执行</li>
+</ul>
+</li>
+<li>关于 check 函数中的虚拟机，是一个较为简单的基于栈与寄存器的 vm 实现，逆向起来并不困难，不再在这里赘述</li>
+<li>关于程序输出，主要关注 check 流程中的输出即可，有 <code>\x01\x00\x00\x00\x00\x00\x00\x00</code> 与 <code>\x02\x00\x00\x00\x00\x00\x00\x00</code> 两种输出，对应不同的 check 结果</li>
+</ul>
+<p>flag 是在函数开始从文件中读入的，并存入了下标为 0 的 string_struct 中，其 name 为 flag，因此，基于上面逆向分析的结果，可以根据 check 返回值侧信道探测出 flag 字符串内容</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line"></span><br><span class="line">table = <span class="string">&#x27;&#x27;</span></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check_exist</span>(<span class="params">ch</span>):</span><br><span class="line">	<span class="keyword">global</span> io, table</span><br><span class="line">	<span class="comment"># first 8 bytes</span></span><br><span class="line">	payload = <span class="string">b&#x27;\x02&#x27;</span> <span class="comment"># read a check_struct</span></span><br><span class="line">	payload += <span class="string">b&#x27;\x01&#x27;</span> <span class="comment"># check_mode = 1</span></span><br><span class="line">	payload += <span class="string">b&#x27;\xd1\x66\x9c\x89\xf3\x5b&#x27;</span> <span class="comment"># fixed bytes</span></span><br><span class="line">	<span class="comment"># get_data routine</span></span><br><span class="line">	payload += struct.pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="number">1</span>) <span class="comment"># length</span></span><br><span class="line">	payload += ch.encode() <span class="comment"># data</span></span><br><span class="line"></span><br><span class="line">	io.send(payload)</span><br><span class="line">	io.recv(<span class="number">8</span>) <span class="comment"># should be &#x27;\x00&#x27; * 8</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># first 8 bytes</span></span><br><span class="line">	payload = <span class="string">b&#x27;\x01&#x27;</span> <span class="comment"># check routine</span></span><br><span class="line">	payload += <span class="string">b&#x27;\x00&#x27;</span> <span class="comment"># string_struct vector index</span></span><br><span class="line">	payload += <span class="string">b&#x27;\x00&#x27;</span> <span class="comment"># check_struct vector index</span></span><br><span class="line">	payload += <span class="string">b&#x27;\xff&#x27;</span> * <span class="number">5</span> <span class="comment"># padding</span></span><br><span class="line">	</span><br><span class="line">	io.send(payload)</span><br><span class="line">	<span class="keyword">if</span> io.recv(<span class="number">8</span>) == struct.pack(<span class="string">&#x27;&lt;Q&#x27;</span>, <span class="number">2</span>):</span><br><span class="line">		table += ch</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check_index</span>(<span class="params">ch, idx</span>):</span><br><span class="line">	<span class="keyword">global</span> io, flag</span><br><span class="line">	<span class="comment"># first 8 bytes</span></span><br><span class="line">	payload = <span class="string">b&#x27;\x02&#x27;</span> <span class="comment"># read a check_struct</span></span><br><span class="line">	payload += <span class="string">b&#x27;\x02&#x27;</span> <span class="comment"># check_mode = 2</span></span><br><span class="line">	payload += <span class="string">b&#x27;\xd1\x66\x9c\x89\xf3\x5b&#x27;</span> <span class="comment"># fixed bytes</span></span><br><span class="line">	<span class="comment"># vm instructions</span></span><br><span class="line">	instr = <span class="string">b&#x27;\x00&#x27;</span> + ch.encode() <span class="comment"># push ch</span></span><br><span class="line">	instr += <span class="string">b&#x27;\x01&#x27;</span> + struct.pack(<span class="string">&#x27;&lt;B&#x27;</span>, idx) <span class="comment"># push string[idx]</span></span><br><span class="line">	instr += <span class="string">b&#x27;\x03\x06&#x27;</span> <span class="comment"># stack[sp] = stack[sp-1] ^ stack[sp-2]</span></span><br><span class="line">	instr += <span class="string">b&#x27;\x05&#x27;</span> <span class="comment"># return stack[sp] != 0</span></span><br><span class="line">	<span class="comment"># get_data routine</span></span><br><span class="line">	payload += struct.pack(<span class="string">&#x27;&lt;I&#x27;</span>, <span class="built_in">len</span>(instr)) <span class="comment"># length</span></span><br><span class="line">	payload += instr</span><br><span class="line"></span><br><span class="line">	io.send(payload)</span><br><span class="line">	io.recv(<span class="number">8</span>) <span class="comment"># should be &#x27;\x00&#x27; * 8</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># first 8 bytes</span></span><br><span class="line">	payload = <span class="string">b&#x27;\x01&#x27;</span> <span class="comment"># check routine</span></span><br><span class="line">	payload += <span class="string">b&#x27;\x00&#x27;</span> <span class="comment"># string_struct vector index</span></span><br><span class="line">	payload += <span class="string">b&#x27;\x00&#x27;</span> <span class="comment"># check_struct vector index</span></span><br><span class="line">	payload += <span class="string">b&#x27;\xff&#x27;</span> * <span class="number">5</span> <span class="comment"># padding</span></span><br><span class="line"></span><br><span class="line">	io.send(payload)</span><br><span class="line">	<span class="keyword">if</span> io.recv(<span class="number">8</span>) == struct.pack(<span class="string">&#x27;&lt;Q&#x27;</span>, <span class="number">1</span>):</span><br><span class="line">		flag += ch</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> ch <span class="keyword">in</span> string.printable:</span><br><span class="line">	io = remote(<span class="string">&#x27;94.74.84.207&#x27;</span>, <span class="number">7892</span>)</span><br><span class="line">	check_exist(ch)</span><br><span class="line">	io.close()</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">	l = <span class="built_in">len</span>(flag)</span><br><span class="line">	<span class="keyword">for</span> ch <span class="keyword">in</span> table:</span><br><span class="line">		io = remote(<span class="string">&#x27;94.74.84.207&#x27;</span>, <span class="number">7892</span>)</span><br><span class="line">		check_index(ch, l)</span><br><span class="line">		io.close()</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(flag) &gt; l:</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">	<span class="keyword">if</span> flag.endswith(<span class="string">&#x27;&#125;&#x27;</span>):</span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br><span class="line"><span class="comment"># RCTF&#123;7919f5f8286dd645da24b2045abb85fc&#125;</span></span><br></pre></td></tr></table></figure>
+    </div>
+     
+    <div class="post-footer__meta"><p>updated at 2022-12-14</p></div> 
+    <div class="post-entry__tags"><a href="/tags/reverse/" class="post-tags__link button"># reverse</a><a href="/tags/writeup/" class="post-tags__link button"># writeup</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/2022/12/04/MOSEC%202022%20Record/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            Next Post
+                        </div>
+                        <div class="nav__title">
+                            MOSEC 2022 Record
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="Back to Top" title="Back to Top">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2022 <a href="/">arcovegle&#39;s blog</a>
+        </p>
+    
+    
+</footer>
+
+        </div>
+        
+    <script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+    <script>
+        window.lazyLoadOptions = {
+            elements_selector: ".lazy",
+            threshold: 0
+        };
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.css">
+
+    
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.js"></script>
+
+    <script>
+        let lazyloadT = Boolean('true'),
+            auto_fancybox = Boolean('true')
+        if (auto_fancybox) {
+            $(".post__content").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        } else {
+            $(".post__content").find("fancybox").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        }
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+
+    </body>
+</html>
