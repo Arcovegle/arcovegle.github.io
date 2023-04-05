@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+
+    
+
+    <!-- 渲染优化 -->
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="HandheldFriendly" content="True" >
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--icon-->
+
+    
+    
+    
+    
+    
+
+
+    <!-- meta -->
+
+
+<title>XCTF Final flappy-bird-cheat | arcovegle&#39;s blog</title>
+
+
+    <meta name="keywords" content="reverse, writeup">
+
+
+
+
+    <!-- OpenGraph -->
+ 
+    <meta name="description" content="Preface A glimpse Make things easier Recover symbols Recover structures   Just reverse it My solution  Preface有幸能和队友们一起参与第 7 届 XCTF Final，也是我生涯中第一次体验 Final 的氛围。这道题目是比赛第一天解题赛中我一直尝试攻破的题目，但很可惜直到最后一刻我也没能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XCTF Final flappy-bird-cheat">
+<meta property="og:url" content="http://arcovegle.github.io/2023/04/05/XCTF%20Final%20flappy-bird-cheat/index.html">
+<meta property="og:site_name" content="arcovegle&#39;s blog">
+<meta property="og:description" content="Preface A glimpse Make things easier Recover symbols Recover structures   Just reverse it My solution  Preface有幸能和队友们一起参与第 7 届 XCTF Final，也是我生涯中第一次体验 Final 的氛围。这道题目是比赛第一天解题赛中我一直尝试攻破的题目，但很可惜直到最后一刻我也没能">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://arcovegle.github.io/2023/04/05/XCTF%20Final%20flappy-bird-cheat/flag-part-2.png">
+<meta property="article:published_time" content="2023-04-05T02:20:13.000Z">
+<meta property="article:modified_time" content="2023-04-05T02:23:47.082Z">
+<meta property="article:author" content="arcovegle">
+<meta property="article:tag" content="reverse">
+<meta property="article:tag" content="writeup">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://arcovegle.github.io/2023/04/05/XCTF%20Final%20flappy-bird-cheat/flag-part-2.png">
+
+
+    
+<link rel="stylesheet" href="/css/style/main.css">
+ 
+
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="/css/highlight/default.css" media="none" >
+        
+            <link rel="stylesheet" id="hl-dark-theme" href="/css/highlight/dark.css" media="none">
+        
+    
+
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/style/dark.css">
+
+    
+<script src="/js/darkmode.js"></script>
+
+
+
+     
+
+    <!-- custom head -->
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+    <body>
+        <div id="app" tabindex="-1">
+            <header class="header">
+    <div class="header__left">
+        <a href="/" class="button">
+            <span class="logo__text">arcovegle&#39;s blog</span>
+        </a>
+    </div>
+    <div class="header__right">
+        
+            <div class="navbar__menus">
+                
+                    <a href="/" class="navbar-menu button">Home</a>
+                
+                    <a href="/archives/" class="navbar-menu button">Archives</a>
+                
+                    <a href="/about/" class="navbar-menu button">About</a>
+                
+            </div>
+        
+        
+        
+    <a href="/search/" id="btn-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="24" height="24" fill="currentColor" stroke="currentColor" stroke-width="32"><path d="M192 448c0-141.152 114.848-256 256-256s256 114.848 256 256-114.848 256-256 256-256-114.848-256-256z m710.624 409.376l-206.88-206.88A318.784 318.784 0 0 0 768 448c0-176.736-143.264-320-320-320S128 271.264 128 448s143.264 320 320 320a318.784 318.784 0 0 0 202.496-72.256l206.88 206.88 45.248-45.248z"></path></svg>
+    </a>
+
+
+        
+        
+    <a href="javaScript:void(0);" id="btn-toggle-dark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </a>
+
+
+        
+            <a class="dropdown-icon button" id="btn-dropdown" tabindex="0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width='24' height='24' fill="none" stroke="currentColor" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"></path></svg></a>
+            <div class="dropdown-menus" id="dropdown-menus">
+                
+                    <a href="/" class="dropdown-menu button">Home</a>
+                
+                    <a href="/archives/" class="dropdown-menu button">Archives</a>
+                
+                    <a href="/about/" class="dropdown-menu button">About</a>
+                
+            </div>
+        
+    </div>
+</header>
+
+
+            <main class="main">
+    
+
+<div class="post-title">
+    <h1 class="post-title__text">
+        XCTF Final flappy-bird-cheat
+    </h1>
+    <div class="post-title__meta">
+        <a href="/archives/2023/04/" class="post-meta__date button">2023-04-05</a>
+        
+ 
+        
+    
+    
+
+
+ 
+
+ 
+    </div>
+</div>
+
+
+
+<article class="post content-card">
+    <div class="post__header"></div>
+    <div class="post__content">
+        <ul>
+<li><a href="#Preface">Preface</a></li>
+<li><a href="#A-glimpse">A glimpse</a></li>
+<li><a href="#Make-things-easier">Make things easier</a><ul>
+<li><a href="#Recover-symbols">Recover symbols</a></li>
+<li><a href="#Recover-structures">Recover structures</a></li>
+</ul>
+</li>
+<li><a href="#Just-reverse-it">Just reverse it</a></li>
+<li><a href="#My-solution">My solution</a></li>
+</ul>
+<h2 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h2><p>有幸能和队友们一起参与第 7 届 XCTF Final，也是我生涯中第一次体验 Final 的氛围。这道题目是比赛第一天解题赛中我一直尝试攻破的题目，但很可惜直到最后一刻我也没能解出。赛后反思一下，归因于对题目中非对称密码的签名验证原理不够熟悉以及面对较大逆向工作量的题目时没有保持同一个清晰的思路。</p>
+<h2 id="A-glimpse"><a href="#A-glimpse" class="headerlink" title="A glimpse"></a>A glimpse</h2><p>题目是一道 unity 游戏相关的逆向，并且从游戏的 lib 目录下可以获知游戏是将 IL2cpp 作为后端构建出来的，于是最初的思路是使用 IL2cppDumper 提取 global-metadata 为 il2cpp.so 恢复符号表。</p>
+<p>尝试过后，发现游戏中并没有获取 flag 的逻辑，推测这就是正常的 flappy bird 游戏，而 flag 藏在题目提供的流量与 zygisk 模块中。</p>
+<p>通过 <a target="_blank" rel="noopener" href="https://github.com/topjohnwu/zygisk-module-sample">https://github.com/topjohnwu/zygisk-module-sample</a> 简单了解一下 zygisk 模块的生成过程与使用方法，我们可以在使用高于 <code>Magisk v24.0</code> root 的 Android 机上安装题目提供的 flappy-bird-cheat 模块。</p>
+<p>安装并运行题目附件给出的 flappy bird 游戏，可以看到左上角窗口已经加载了这个 cheat 模块，窗口中有一个 Login 按钮，点击后会提示错误。</p>
+<p>分析 cheat 模块中给出的 so 文件，通过对 Login 字符串的交叉引用可以定位到核心逻辑位于 <code>sub_19D0D4</code>，进一步分析函数的调用，我们可以得到 <code>zygisk_module_entry</code> → <code>sub_198AB4</code> → <code>sub_1990D8</code> by <code>pthread_create</code> 这样一条函数调用栈，在 <code>sub_1990D8</code> 中我们关注 <code>sub_1A0E28</code>，结合函数内的字符串信息，可以获知该函数原型是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PUBLIC <span class="type">int</span> <span class="title">DobbyHook</span><span class="params">(<span class="type">void</span> *address, <span class="type">dobby_dummy_func_t</span> replace_func, <span class="type">dobby_dummy_func_t</span> *origin_func)</span></span></span><br></pre></td></tr></table></figure>
+
+<p><code>sub_19D0D4</code> 作为该函数的第二个参数，显然是使用 <a target="_blank" rel="noopener" href="https://github.com/jmpews/Dobby">https://github.com/jmpews/Dobby</a> Hook 后的游戏作弊代码。</p>
+<h2 id="Make-things-easier"><a href="#Make-things-easier" class="headerlink" title="Make things easier"></a>Make things easier</h2><p>比赛过程中我是直接选择硬着头皮逆 <code>sub_19D0D4</code> 这个函数的，但由于没有符号表与结构体信息，在实际过程中很容易瞻前不能顾后，在递归分析函数的过程中迷失方向，失去原本的程序逻辑。为了让逆向的过程更为顺利，有必要先恢复一下部分函数的符号表以及程序中用到的核心结构体信息。</p>
+<h3 id="Recover-symbols"><a href="#Recover-symbols" class="headerlink" title="Recover symbols"></a>Recover symbols</h3><p>再回头观察一下 strings，我们可以得知关于生成该 so 文件的不少信息。例如，cheat 模块实现的过程中使用到了 DobbyHook、libcurl 7.84.0-DEV 与 openssl 3.0.5，而这些信息可以极大帮助我们恢复 so 的符号表，以 openssl 为例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash -e</span></span><br><span class="line"></span><br><span class="line">OPENSSL_VERSION=3.0.5</span><br><span class="line">NDK_VERSION=android-ndk-r22b</span><br><span class="line">ANDROID_TARGET_API=21</span><br><span class="line"></span><br><span class="line">WORK_PATH=$(<span class="built_in">pwd</span>)</span><br><span class="line">ANDROID_NDK_PATH=<span class="variable">$&#123;WORK_PATH&#125;</span>/<span class="variable">$&#123;NDK_VERSION&#125;</span></span><br><span class="line">OPENSSL_SOURCE_PATH=<span class="variable">$&#123;WORK_PATH&#125;</span>/openssl-<span class="variable">$&#123;OPENSSL_VERSION&#125;</span></span><br><span class="line"></span><br><span class="line">ANDROID_TARGET=arm64-v8a</span><br><span class="line"></span><br><span class="line">OUTPUT_PATH=<span class="variable">$&#123;WORK_PATH&#125;</span>/openssl_<span class="variable">$&#123;OPENSSL_VERSION&#125;</span>_<span class="variable">$&#123;ANDROID_TARGET&#125;</span></span><br><span class="line">OPENSSL_TMP_DIR=<span class="variable">$&#123;WORK_PATH&#125;</span>/tmp/openssl_<span class="variable">$&#123;ANDROID_TARGET&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># download android ndk</span></span><br><span class="line">wget https://dl.google.com/android/repository/<span class="variable">$&#123;NDK_VERSION&#125;</span>-linux-x86_64.zip</span><br><span class="line">unzip <span class="variable">$&#123;NDK_VERSION&#125;</span>-linux-x86_64.zip</span><br><span class="line"></span><br><span class="line"><span class="comment"># download openssl</span></span><br><span class="line">wget https://www.openssl.org/source/openssl-<span class="variable">$&#123;OPENSSL_VERSION&#125;</span>.tar.gz</span><br><span class="line">tar -zxvf openssl-<span class="variable">$&#123;OPENSSL_VERSION&#125;</span>.tar.gz</span><br><span class="line"></span><br><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$&#123;OPENSSL_TMP_DIR&#125;</span></span><br><span class="line"><span class="built_in">cp</span> -r <span class="variable">$&#123;OPENSSL_SOURCE_PATH&#125;</span>/* <span class="variable">$&#123;OPENSSL_TMP_DIR&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> build_library &#123;</span><br><span class="line">    <span class="built_in">mkdir</span> -p <span class="variable">$&#123;OUTPUT_PATH&#125;</span></span><br><span class="line">    make -j4</span><br><span class="line">    make install</span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="variable">$&#123;OPENSSL_TMP_DIR&#125;</span></span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="variable">$&#123;OUTPUT_PATH&#125;</span>/bin</span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="variable">$&#123;OUTPUT_PATH&#125;</span>/share</span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="variable">$&#123;OUTPUT_PATH&#125;</span>/ssl</span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="variable">$&#123;OUTPUT_PATH&#125;</span>/lib/engines*</span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="variable">$&#123;OUTPUT_PATH&#125;</span>/lib/pkgconfig</span><br><span class="line">    <span class="built_in">rm</span> -rf <span class="variable">$&#123;OUTPUT_PATH&#125;</span>/lib/ossl-modules</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Build completed! Check output libraries in <span class="variable">$&#123;OUTPUT_PATH&#125;</span>&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> ANDROID_NDK_ROOT=<span class="variable">$&#123;ANDROID_NDK_PATH&#125;</span></span><br><span class="line">PATH=<span class="variable">$ANDROID_NDK_ROOT</span>/toolchains/llvm/prebuilt/linux-x86_64/bin:<span class="variable">$ANDROID_NDK_ROOT</span>/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin:<span class="variable">$ANDROID_NDK_ROOT</span>/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;OPENSSL_TMP_DIR&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Starting compile...&quot;</span></span><br><span class="line"></span><br><span class="line">./Configure android-arm64 -D__ANDROID_API__=<span class="variable">$&#123;ANDROID_TARGET_API&#125;</span> shared no-tests --prefix=<span class="variable">$&#123;OUTPUT_PATH&#125;</span></span><br><span class="line">build_library</span><br></pre></td></tr></table></figure>
+
+<p>bash 脚本执行后我们可以在 <code>$OUTPUT_PATH/lib</code> 目录下找到 <code>libcrypto.so</code>，通过 bindiff 比对可以恢复一部分特征明显的函数符号。在后续题目的分析中，主要用到的是 openssl 的 <a target="_blank" rel="noopener" href="https://github.com/openssl/openssl/tree/master/crypto/evp/">evp</a> 系列函数，其中包括 RSA 的加解密、签名的验证、消息摘要以及对称密码 AES 的使用。</p>
+<h3 id="Recover-structures"><a href="#Recover-structures" class="headerlink" title="Recover structures"></a>Recover structures</h3><p>结构体的构建主要是通过分析程序上下文信息推断出来的，主要涉及两个关键的结构体，对后续分析很有帮助</p>
+<ol>
+<li><p>String</p>
+<p> 在逆向分析的过程中，可以发现如下的代码结构反复出现：</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">__int64 arg;</span><br><span class="line">tmp = *(<span class="type">unsigned</span> __int8 *)arg</span><br><span class="line"><span class="keyword">if</span> ( (tmp &amp; <span class="number">1</span>) == <span class="number">0</span> )</span><br><span class="line">    var = tmp &gt;&gt; <span class="number">1</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    var = *(_DWORD *)(arg + <span class="number">8</span>);</span><br><span class="line"><span class="keyword">if</span> ( (tmp &amp; <span class="number">1</span>) == <span class="number">0</span> )</span><br><span class="line">    ptr = arg + <span class="number">1</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    ptr = *(_QWORD *)(arg + <span class="number">16</span>);</span><br></pre></td></tr></table></figure>
+<p> 不难得知代码对应的是字符串相关操作，第一个 if else 判断是获得字符串的长度，第二个是获得字符串指针。参考 C++ 中 <code>std::string</code> 类型在内存中的分布，可以相应地推测出 so 中 String 的具体实现：</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// short string</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Short_String</span> &#123;</span><br><span class="line">    <span class="comment">// mask: flags &amp; 1 == 0</span></span><br><span class="line">    <span class="comment">// length: flags &gt;&gt; 1</span></span><br><span class="line">    <span class="type">char</span> flags;</span><br><span class="line">    <span class="type">char</span> str[<span class="number">23</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// long string</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Long_String</span> &#123;</span><br><span class="line">    <span class="comment">// mask: flags &amp; 1 == 1</span></span><br><span class="line">    <span class="type">char</span> flags;</span><br><span class="line">    <span class="type">char</span> unused[<span class="number">7</span>];</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> length;</span><br><span class="line">    <span class="type">char</span>* str;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">union</span> <span class="title class_">String</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Short_String</span> s_str;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Long_String</span> l_str;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>CheatContext</p>
+<p> 回到 <code>sub_1A0E28</code> 函数，该函数调用 <code>sub_48AB60</code> 为全局变量 0x51AB38 指向的地址分配了 0x60 大小的内存空间。交叉引用这个全局变量，结合程序的上下文信息，最终可以逆向得知该全局变量对应的结构体原型大致为：</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 0x51AB38 at .bss</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">CheatContext</span> &#123;</span><br><span class="line">    <span class="type">bool</span> is_auth;</span><br><span class="line">    <span class="type">bool</span> is_shading_init;</span><br><span class="line">    <span class="type">bool</span> is_login_enable;</span><br><span class="line">    <span class="type">bool</span> is_login_fail;</span><br><span class="line">    <span class="type">bool</span> is_get_flag;</span><br><span class="line">    <span class="type">bool</span> invincible;</span><br><span class="line">    <span class="type">bool</span> multiple_score;</span><br><span class="line">    <span class="type">char</span> unknown_off_0x7;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> multiplier;</span><br><span class="line">    <span class="type">bool</span> same_obstacle;</span><br><span class="line">    <span class="type">bool</span> more_obstacle;</span><br><span class="line">    <span class="type">bool</span> speed_up;</span><br><span class="line">    <span class="type">char</span> unknown_off_0xf;</span><br><span class="line">    <span class="type">float</span> speed_rate;</span><br><span class="line">    <span class="type">int</span> err_type;</span><br><span class="line">    <span class="type">void</span>* flag_part_1;</span><br><span class="line">    <span class="type">void</span>* auth_token;</span><br><span class="line">    <span class="type">void</span>* map_key_off_0x38;</span><br><span class="line">    <span class="type">void</span>* map_key_off_0x40;</span><br><span class="line">    <span class="type">void</span>* unknown_off_0x48;</span><br><span class="line">    <span class="type">void</span>* unknown_off_0x50;</span><br><span class="line">    <span class="type">float</span> unknown_off_0x58;</span><br><span class="line">    <span class="type">int</span> unknown_off_0x5C;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p> 其中，带有 unknown 前缀的结构体成员在实际分析中并没有很好的上下文关系帮助推断，且与解出题目及了解程序运行逻辑没有太大关联，对后续分析影响不大。</p>
+</li>
+</ol>
+<h2 id="Just-reverse-it"><a href="#Just-reverse-it" class="headerlink" title="Just reverse it"></a>Just reverse it</h2><p>有了加解密部分的函数符号表已经关键变量的结构体，我们便可以较为愉悦地重新逆向分析这个 cheat 模块。不难得知，我们分析的主要目标集中在 <code>sub_19D5C4</code> 与 <code>sub_19DAE0</code> 这两个函数，前者对应 Login 按钮按下后的逻辑，后者对应 Login 成功后，按下 Get Flag 按钮的逻辑。</p>
+<p>分析 Login 逻辑，cheat 模块首先会读出 <code>/data/data/re.ctf.flappybird/files/key.txt</code> 中的内容，传入 <code>sub_19BA24</code> 函数进行 sha1 后得到 token，在流量中可以找到对应的字段为 <code>token-ab003dd3b5eeea4d2100f9e1322536e00d10920f</code> ，随后调用 <code>sub_19B60C</code> 函数通过 java 层的 API 读取了主机的 <code>DEVICE_NAME</code>，通过读 &#x2F;proc 获取了 cmdline、tcp、tcp6 等信息进行拼接，接下来传入 <code>sub_19BE78</code> 进行加密得到最终在 HTTP 协议层中发送的 Content。</p>
+<p>加密过程首先使用 <code>srand(time(0) &amp; 0xFFFFFFF8)</code> 设置伪随机种子，随后用 <code>rand()</code> 生成了 32 字节的 AES CBC 加密密钥。Content 的内容由三部分构成，前 512 字节为使用 RSA 公钥加密后的 AES CBC 密钥，中间 512 字节为 AES CBC 加密后的信息，最后 512 字节为使用私钥签名后的 sha256 摘要。</p>
+<p>得到最终 HTTP 协议中发送的 Content 后，程序调用 sub_19C750 函数构造 HTTP 请求与服务端交互，之后将服务端返回的内容先后进行 <code>sub_19D784</code> 验签 → <code>sub_19D794</code> AES CBC 解密 → <code>sub_19CDA4</code> 运算解密得到服务端返回内容的明文。在这一过程中，AES CBC 解密所使用的密钥是硬编码在 .data 段中的。</p>
+<p>分析 Get Flag 逻辑，可以得知 flag 的内容由两部分拼接而成，第一部分是 <code>DEVICE_NAME</code> 进行 sha256 后前 16 字节的 hex，第二部分是服务端返回内容进行格式化后 sha256 哈希的后 16 字节的 hex。</p>
+<p>于是我们就有了题目的两种解法。第一种是完全按照 cheat 模块客户端与服务端交互的流程，根据密钥与加解密算法解出前后两段的 flag 内容；第二种是通过 AES CBC 解密获取请求流量中包含的 <code>DEVICE_NAME</code> 即前半段 flag，同时自实现服务端，使得客户端与其交互时自动生成 flag 的后半段。</p>
+<h2 id="My-solution"><a href="#My-solution" class="headerlink" title="My solution"></a>My solution</h2><p>这里采用的是第二种解法，相比第一种解法省去了逆向后半段解密算法这一繁琐易错的过程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> http.server <span class="keyword">import</span> HTTPServer, BaseHTTPRequestHandler</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Server</span>(<span class="title class_ inherited__">BaseHTTPRequestHandler</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">do_POST</span>(<span class="params">self</span>):</span><br><span class="line">        self.send_response(<span class="number">200</span>)</span><br><span class="line">        content = <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;d9b2bff81aaeb058b96d10106fb5c35edd0f7abf8dc5b425fcfda918e1e7e342bf6c18307a7f7902b23f08d8b17bcb32656b03ff1ee1793d578247623095442a6f64c9dd717c9301d187bfca5733383d218570bde1227ee160928ed5b36c0c6429762e754500a3445531444a4386a6ed3eb33fcb3ad823c0321d5d5c7ade907613ec4486203f6b067eb1f83c68e9ba33894ac3247f7ed0217753574ca52e213720b3fb1c4153e4644f3e1e4883b8530ca196f8bedeffe692a8c7f80459f6935def1d1041ae011f5d31fa13e6630e2c336af90e7dba2a405f89ca80059dfd84c524283cc576fc46da814ffdcc6cfe47fe3d879c0150174a725adfd19ea29bfff6b326f77eb218cf42cddf1b6e007a4fadde98d2ccdf4e72a69168e4fd3cca80d71fbbd8af19dec14bb1598e6a035b8dfb5403dc0de3aa6bd9fa33ac633b020625d499703dc379a7cd1dfd71e9934890ab9399389d4085a184bc1d1b86c34652455b8339a757c803337979e101a91c2f3b92e32b58d5d04ba3a3250bf30298466cdd75d29402e2044f7bc379fb271f44ec79f72be29e573dca5dc8aa3c07aa6ee3667405ee0db60d3b2a7079ada3c06e21a5a55f76fa66ca013b80b11a0319e72cc5a7d3c7ce4cc42c0de0361f427200ed669bd923d4a55c51ca3c029c01b0ce76bb0452fe8f3e2ea807b45a0e8da9ed747907915b4d661e383a7b04aed7f5f47f87099d9db5cd026660a7338774bcb485527ab01673ce15422b45459e7b6ac9da857d8285bbaa092954260e4bc03a6f6a4fe66ec2c4a7449c96b1862f4fc1577040e2bb8e4c01725596512b45f960d76f24d8e51daac72b4719f41a493747f999a77b9647f4c987a360e99e880d3faf8e58158b416f99842fe0203b126115b7a18c019de995d830f5857fd1f8f5538a8aad18382ec8c30d17745c7edb63bc707d&#x27;</span>)</span><br><span class="line">        self.send_header(<span class="string">&#x27;Content-Length&#x27;</span>, <span class="built_in">len</span>(content))</span><br><span class="line">        self.end_headers()</span><br><span class="line">        self.wfile.write(content)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    host = (<span class="string">&#x27;0.0.0.0&#x27;</span>, <span class="number">5000</span>)</span><br><span class="line">    server = HTTPServer(host, Server)</span><br><span class="line">    server.serve_forever()</span><br></pre></td></tr></table></figure>
+
+<p>对 <code>sub_19C750</code> 函数中请求的 ip 地址稍作 patch，重新打包 zygisk 模块即可在游戏中点击 Login 后出现 Get Flag 按钮，点击后即可出现 flag 字符串，有效的为花括号内后 32 字符。</p>
+<p><img src="/2023/04/05/XCTF%20Final%20flappy-bird-cheat/flag-part-2.png" class="lazy" data-srcset="/2023/04/05/XCTF%20Final%20flappy-bird-cheat/flag-part-2.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAABlBMVEXMzMyWlpYU2uzLAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNgAAAAAgAB9HFkpgAAAABJRU5ErkJggg==" alt="flag-part-2.png"></p>
+<p>前半部分 flag 的获取无论解法一或是解法二都是相同的，需要关注的是伪随机数密钥的生成，我们可以在流量中将 tcp 三次握手过程中首个包的时间作为彼时时间，即可还原密钥。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ctypes</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">from</span> hashlib <span class="keyword">import</span> sha256</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.Padding <span class="keyword">import</span> unpad</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">request_data = <span class="built_in">bytes</span>.fromhex(<span class="string">&#x27;69569bb31920366e450c9dcdc668f869a65ed492c2167d18abf75f74f5ca151b1f4567ba56927b6f214ff902f...&#x27;</span>)</span><br><span class="line"><span class="comment"># Aug 28, 2022 19:03:15.073124000 UTC+8</span></span><br><span class="line">utc8 = datetime.timezone(datetime.timedelta(hours=<span class="number">8</span>))</span><br><span class="line">seed = <span class="built_in">int</span>(datetime.datetime(<span class="number">2022</span>, <span class="number">8</span>, <span class="number">28</span>, <span class="number">19</span>, <span class="number">3</span>, <span class="number">15</span>, tzinfo=utc8).timestamp()) &amp; <span class="number">0xfffffff8</span></span><br><span class="line">libc = ctypes.CDLL(<span class="string">&quot;libc.so.6&quot;</span>)</span><br><span class="line">libc.srand(seed)</span><br><span class="line">key = <span class="built_in">bytes</span>([libc.rand() &amp; <span class="number">0xFF</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>)])</span><br><span class="line"></span><br><span class="line">aes = AES.new(key, mode=AES.MODE_CBC, iv=<span class="string">b&quot;\x00&quot;</span>*<span class="number">16</span>)</span><br><span class="line">key_enc, ciphertext, signature = request_data[<span class="number">0</span>:<span class="number">512</span>], request_data[<span class="number">512</span>:-<span class="number">512</span>], request_data[-<span class="number">512</span>:]</span><br><span class="line">plaintext = unpad(aes.decrypt(ciphertext), <span class="number">16</span>)</span><br><span class="line">flag_part1 = sha256(plaintext.split(<span class="string">b&quot;======\n&quot;</span>)[<span class="number">1</span>].strip()).hexdigest()[<span class="number">0</span>:<span class="number">32</span>]</span><br><span class="line"><span class="built_in">print</span>(flag_part1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 941d52d3ca23967191aee16dd541778d</span></span><br></pre></td></tr></table></figure>
+    </div>
+     
+    <div class="post-footer__meta"><p>updated at 2023-04-05</p></div> 
+    <div class="post-entry__tags"><a href="/tags/reverse/" class="post-tags__link button"># reverse</a><a href="/tags/writeup/" class="post-tags__link button"># writeup</a></div> 
+</article>
+
+
+    <div class="nav">
+        <div class="nav__prev">
+            
+        </div>
+        <div class="nav__next">
+            
+                <a href="/2022/12/14/RCTF%202022%20Reverse%20Writeup/" class="nav__link">
+                    <div>
+                        <div class="nav__label">
+                            Next Post
+                        </div>
+                        <div class="nav__title">
+                            RCTF 2022 Reverse Writeup
+                        </div>
+                    </div>
+                    <div>
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M434.944 790.624l-45.248-45.248L623.04 512l-233.376-233.376 45.248-45.248L713.568 512z" fill="#808080"></path></svg>
+                    </div>
+                </a>
+            
+        </div>
+    </div>
+
+
+
+
+
+</main>
+
+            <footer class="footer">
+     
+    <a href="#" class="button" id="b2t" aria-label="Back to Top" title="Back to Top">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M233.376 722.752L278.624 768 512 534.624 745.376 768l45.248-45.248L512 444.128zM192 352h640V288H192z" fill="currentColor"></path>
+        </svg>
+    </a>
+
+    
+
+
+    
+     
+ 
+
+ 
+    
+        
+        <p class="footer-copyright">
+            Copyright © 2023 <a href="/">arcovegle&#39;s blog</a>
+        </p>
+    
+    
+</footer>
+
+        </div>
+        
+    <script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+    <script>
+        window.lazyLoadOptions = {
+            elements_selector: ".lazy",
+            threshold: 0
+        };
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+ 
+
+
+
+ 
+
+
+    
+ 
+
+
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.css">
+
+    
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.4.1/dist/jquery.fancybox.min.js"></script>
+
+    <script>
+        let lazyloadT = Boolean('true'),
+            auto_fancybox = Boolean('true')
+        if (auto_fancybox) {
+            $(".post__content").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        } else {
+            $(".post__content").find("fancybox").find('img').each(function () {
+                var element = document.createElement("a");
+                $(element).attr("data-fancybox", "gallery");
+                $(element).attr("href", $(this).attr("src"));
+                if (lazyloadT) {
+                    $(element).attr("href", $(this).attr("data-srcset"));
+                }
+                $(this).wrap(element);
+            });
+        }
+    </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+
+    </body>
+</html>
