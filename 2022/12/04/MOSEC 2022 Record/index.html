@@ -59,14 +59,15 @@
 
     
     
-        <link rel="stylesheet" id="hl-default-theme" href="/css/highlight/default.css" media="none" >
+    
+    
+        <link rel="stylesheet" id="hl-default-theme" href="/css/themes/prism.css" media="none" >
         
-            <link rel="stylesheet" id="hl-dark-theme" href="/css/highlight/dark.css" media="none">
+            <link rel="stylesheet" id="hl-dark-theme" href="/css/themes/prism-tomorrow.css" media="none">
         
+    
     
 
-    
-    
 
     
     
@@ -186,7 +187,16 @@
 <li><p><strong>趁手的工具使得漏洞挖掘的过程事半功倍</strong>。在王宇老师分享的这个议题当中，这里的“工具”指 Fuzzing 工具与动态调试工具。在研究重构后的 IO80211Family 的过程中，他将之前开源项目 <a target="_blank" rel="noopener" href="https://github.com/didi/kemon">kemon</a> 移植到了 Apple Silicon 平台并基于 lldb 搭建了远程内核调试环境。通过一个 demo 视频，展示了如何结合使用上面提到的两种工具，相信参会的二进制研究人员都能体会到 debugger 在 console 里任你差遣的喜悦与满足。</p>
 </li>
 <li><p><strong>Do one thing and do it well</strong>. 这是 Unix 的哲学，也是 Linux Kernel 的编码规范。王宇老师之所以提到这点，是源于议题中分享的一个他挖洞的亲身经历，漏洞的成因便是在没有遵循上述编码规范：</p>
-  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">vulnerable</span><span class="params">(<span class="type">void</span> **args)</span> &#123;</span><br><span class="line">    <span class="comment">// ...    </span></span><br><span class="line">    <span class="keyword">if</span> (condition0 &amp;&amp; (condition1 || condition2) || !condition3) &#123;</span><br><span class="line">        <span class="comment">// ....</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// what should be written here?</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+  <pre class="language-c" data-language="c"><code class="language-c"><span class="token keyword">void</span> <span class="token function">vulnerable</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span><span class="token operator">*</span>args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// ...    </span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>condition0 <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>condition1 <span class="token operator">||</span> condition2<span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token operator">!</span>condition3<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token comment">// ....</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
+        <span class="token comment">// what should be written here?</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token comment">// ...</span>
+<span class="token punctuation">&#125;</span></code></pre>
 <p>  上面的代码中，if 判断中合并了太多条件，那么 else 中能否将剩下的情况全部当做同一情况处理呢？如果不能，那么这里很可能就会引入漏洞。</p>
 </li>
 <li><p><strong>漏洞可能会反复出现在同一模块或组件</strong>。这是王宇老师的经验之谈，在代码的重构、整合过程中，有可能不知不觉中引入了新的漏洞，甚至会出现栈溢出这样简单却实用的漏洞。此外，在新版本安全补丁发布后，相关审计工作也需要尽早开始，漏洞可能就潜藏在新的 patch 当中。</p>
